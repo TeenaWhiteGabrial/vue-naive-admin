@@ -14,8 +14,8 @@ export const useAuthStore = defineStore('auth', {
     accessToken: undefined,
   }),
   actions: {
-    setToken({ accessToken }) {
-      this.accessToken = accessToken
+    setToken(data) {
+      this.accessToken = data
     },
     resetToken() {
       this.$reset()

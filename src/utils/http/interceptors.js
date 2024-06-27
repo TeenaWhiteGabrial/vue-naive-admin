@@ -1,12 +1,3 @@
-/**********************************
- * @FilePath: interceptors.js
- * @Author: Ronnie Zhang
- * @LastEditor: Ronnie Zhang
- * @LastEditTime: 2023/12/04 22:46:40
- * @Email: zclzone@outlook.com
- * Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- **********************************/
-
 import { resolveResError } from './helpers'
 import { useAuthStore } from '@/store'
 
@@ -20,7 +11,7 @@ export function setupInterceptors(axiosInstance) {
     const { accessToken } = useAuthStore()
     if (accessToken) {
       // token: Bearer + xxx
-      config.headers.Authorization = `Bearer ${accessToken}`
+      config.headers.Authorization = `${accessToken}`
     }
 
     return config
@@ -32,6 +23,7 @@ export function setupInterceptors(axiosInstance) {
 
   const SUCCESS_CODES = [0, 200]
   function resResolve(response) {
+
     const { data, status, config, statusText, headers } = response
     if (headers['content-type']?.includes('json')) {
       if (SUCCESS_CODES.includes(data?.code)) {
@@ -40,7 +32,7 @@ export function setupInterceptors(axiosInstance) {
       const code = data?.code ?? status
 
       // 根据code处理对应的操作，并返回处理后的message
-      const message = resolveResError(code, data?.message ?? statusText)
+      const message = resolveResError(code, data?.msg ?? statusText)
 
       // 需要错误提醒
       !config?.noNeedTip && message && window.$message?.error(message)

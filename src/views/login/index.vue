@@ -102,7 +102,7 @@
 
 <script setup>
 import { useStorage } from '@vueuse/core'
-import api from './api'
+import api from '@/api'
 import { lStorage, throttle } from '@/utils'
 import { useAuthStore } from '@/store'
 
@@ -152,7 +152,7 @@ async function handleLogin(isQuick) {
     else {
       lStorage.remove('loginInfo')
     }
-    onLoginSuccess(data)
+    onLoginSuccess(data.token)
   }
   catch (error) {
     // 10003为验证码错误专属业务码

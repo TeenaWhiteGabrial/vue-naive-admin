@@ -13,9 +13,16 @@
     <BreadCrumb />
 
     <div class="ml-auto flex flex-shrink-0 items-center px-12 text-18">
-      <ToggleTheme />
-
-      <Fullscreen />
+      <i
+        class="mr-16 cursor-pointer"
+        :class="isDark ? 'i-fe:moon' : 'i-fe:sun'"
+        @click="toggleDark"
+      />
+      <i
+        class="mr-16 cursor-pointer"
+        :class="isFullscreen ? 'i-fe:minimize' : 'i-fe:maximize'"
+        @click="toggle"
+      />
 
       <i
         class="i-fe:github mr-16 cursor-pointer"
@@ -34,8 +41,18 @@
 </template>
 
 <script setup>
-import { ToggleTheme } from '@/components'
-import { BreadCrumb, Fullscreen, MenuCollapse, UserAvatar } from '@/layouts/components'
+import { useDark, useFullscreen, useToggle } from '@vueuse/core'
+import { BreadCrumb, MenuCollapse, UserAvatar } from '@/layouts/components'
+import { useAppStore } from '@/store'
+
+const appStore = useAppStore()
+const isDark = useDark()
+function toggleDark() {
+  appStore.toggleDark()
+  useToggle(isDark)()
+}
+
+const { isFullscreen, toggle } = useFullscreen()
 
 function handleLinkClick(link) {
   window.open(link)
