@@ -8,16 +8,15 @@ export const basicRoutes = [
       layout: 'empty',
     },
   },
-
   {
     name: 'Home',
     path: '/',
     component: () => import('@/views/home/index.vue'),
     meta: {
       title: '首页',
+      affix: true,
     },
   },
-
   {
     name: '404',
     path: '/404',
@@ -27,7 +26,6 @@ export const basicRoutes = [
       layout: 'empty',
     },
   },
-
   {
     name: '403',
     path: '/403',

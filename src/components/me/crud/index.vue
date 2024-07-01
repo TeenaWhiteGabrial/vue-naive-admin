@@ -1,13 +1,10 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/04 22:51:42
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
-  <AppCard v-if="$slots.default" bordered bg="#fafafc dark:black" class="mb-30 min-h-60 rounded-4">
+  <AppCard
+    v-if="$slots.default"
+    bordered
+    bg="#fafafc dark:black"
+    class="mb-30 min-h-60 rounded-4"
+  >
     <form class="flex justify-between p-16" @submit.prevent="handleSearch()">
       <n-space wrap :size="[32, 16]">
         <slot />
@@ -109,7 +106,10 @@ async function handleQuery() {
     let paginationParams = {}
     // 如果非分页模式或者使用前端分页,则无需传分页参数
     if (props.isPagination && props.remote) {
-      paginationParams = { pageNo: pagination.page, pageSize: pagination.pageSize }
+      paginationParams = {
+        pageNo: pagination.page,
+        pageSize: pagination.pageSize,
+      }
     }
     const { data } = await props.getData({
       ...props.queryItems,
@@ -117,7 +117,11 @@ async function handleQuery() {
     })
     tableData.value = data?.pageData || data
     pagination.itemCount = data.total ?? data.length
-    if (pagination.itemCount && !tableData.value.length && pagination.page > 1) {
+    if (
+      pagination.itemCount
+      && !tableData.value.length
+      && pagination.page > 1
+    ) {
       // 如果当前页数据为空，且总条数不为0，则返回上一页数据
       onPageChange(pagination.page - 1)
     }
@@ -164,7 +168,9 @@ function onChecked(rowKeys) {
 function handleExport(columns = props.columns, data = tableData.value) {
   if (!data?.length)
     return $message.warning('没有数据')
-  const columnsData = columns.filter(item => !!item.title && !item.hideInExcel)
+  const columnsData = columns.filter(
+    item => !!item.title && !item.hideInExcel,
+  )
   const thKeys = columnsData.map(item => item.key)
   const thData = columnsData.map(item => item.title)
   const trData = data.map(item => thKeys.map(key => item[key]))

@@ -33,6 +33,7 @@ export const usePermissionStore = defineStore('permission', {
         return null
       const menuItem = {
         label: route.meta.title,
+        affix: !!route.meta.affix,
         key: route.name,
         path: route.path,
         originPath: route.meta.originPath,
@@ -72,6 +73,7 @@ export const usePermissionStore = defineStore('permission', {
           btns: item.children
             ?.filter(item => item.type === 'BUTTON')
             .map(item => ({ code: item.code, name: item.name })),
+          affix: item.affix,
         },
       }
     },

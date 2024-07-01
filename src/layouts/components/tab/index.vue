@@ -1,16 +1,7 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/16 18:50:54
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
   <div>
     <n-tabs
       :value="tabStore.activeTab"
-      :closable="tabStore.tabs.length > 1"
       type="card"
       @close="(path) => tabStore.removeTab(path)"
     >
@@ -18,8 +9,9 @@
         v-for="item in tabStore.tabs"
         :key="item.path"
         :name="item.path"
-        @click="handleItemClick(item.path)"
+        :closable="!item.affix"
         @contextmenu.prevent="handleContextMenu($event, item)"
+        @click="handleItemClick(item.path)"
       >
         {{ item.title }}
       </n-tab>
@@ -82,14 +74,17 @@ async function handleContextMenu(e, tagItem) {
     background: transparent !important;
     border-radius: 4px !important;
     margin-right: 4px;
+
     &:hover {
       border: 1px solid rgb(var(--primary-color)) !important;
     }
   }
+
   .n-tabs-tab--active {
     border: 1px solid rgb(var(--primary-color)) !important;
     background-color: rgba(var(--primary-color), 0.1) !important;
   }
+
   .n-tabs-pad,
   .n-tabs-tab-pad,
   .n-tabs-scroll-padding {

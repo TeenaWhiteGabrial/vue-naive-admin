@@ -1,11 +1,3 @@
-/**********************************
- * @Author: Ronnie Zhang
- * @LastEditor: Ronnie Zhang
- * @LastEditTime: 2023/12/13 20:54:36
- * @Email: zclzone@outlook.com
- * Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- **********************************/
-
 export const defaultLayout = 'normal'
 
 export const defaultPrimaryColor = '#316C72'
@@ -24,8 +16,20 @@ export const naiveThemeOverrides = {
 
 export const basePermissions = [
   {
+    code: 'Home',
+    name: '首页',
+    type: 'MENU',
+    icon: 'i-fe:home',
+    order: 0,
+    enable: true,
+    show: true,
+    keepAlive: true,
+    path: '/',
+    children: [],
+  },
+  {
     code: 'ExternalLink',
-    name: '外链(可内嵌打开)',
+    name: '外链',
     type: 'MENU',
     icon: 'i-fe:external-link',
     order: 98,

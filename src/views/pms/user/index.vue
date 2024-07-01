@@ -1,11 +1,3 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/05 21:29:56
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
   <CommonPage>
     <template #action>
@@ -32,7 +24,11 @@
       </MeQueryItem>
 
       <MeQueryItem label="性别" :label-width="50">
-        <n-select v-model:value="queryItems.gender" clearable :options="genders" />
+        <n-select
+          v-model:value="queryItems.gender"
+          clearable
+          :options="genders"
+        />
       </MeQueryItem>
 
       <MeQueryItem label="状态" :label-width="50">
@@ -65,7 +61,10 @@
             trigger: ['input', 'blur'],
           }"
         >
-          <n-input v-model:value="modalForm.username" :disabled="modalAction !== 'add'" />
+          <n-input
+            v-model:value="modalForm.username"
+            :disabled="modalAction !== 'add'"
+          />
         </n-form-item>
         <n-form-item
           v-if="['add', 'reset'].includes(modalAction)"
@@ -80,7 +79,11 @@
           <n-input v-model:value="modalForm.password" />
         </n-form-item>
 
-        <n-form-item v-if="['add', 'setRole'].includes(modalAction)" label="角色" path="roleIds">
+        <n-form-item
+          v-if="['add', 'setRole'].includes(modalAction)"
+          label="角色"
+          path="roleIds"
+        >
           <n-select
             v-model:value="modalForm.roleIds"
             :options="roles"
@@ -163,29 +166,30 @@ const columns = [
       }),
   },
   { title: '用户名', key: 'username', width: 150, ellipsis: { tooltip: true } },
-  {
-    title: '角色',
-    key: 'roles',
-    width: 200,
-    ellipsis: { tooltip: true },
-    render: ({ roles }) => {
-      if (roles?.length) {
-        return roles.map((item, index) =>
-          h(
-            NTag,
-            { type: 'success', style: index > 0 ? 'margin-left: 8px;' : '' },
-            { default: () => item.name },
-          ),
-        )
-      }
-      return '暂无角色'
-    },
-  },
+  // {
+  //   title: "角色",
+  //   key: "roles",
+  //   width: 200,
+  //   ellipsis: { tooltip: true },
+  //   render: ({ roles }) => {
+  //     if (roles?.length) {
+  //       return roles.map((item, index) =>
+  //         h(
+  //           NTag,
+  //           { type: "success", style: index > 0 ? "margin-left: 8px;" : "" },
+  //           { default: () => item.name }
+  //         )
+  //       );
+  //     }
+  //     return "暂无角色";
+  //   },
+  // },
   {
     title: '性别',
     key: 'gender',
     width: 80,
-    render: ({ gender }) => genders.find(item => gender === item.value)?.label ?? '',
+    render: ({ gender }) =>
+      genders.find(item => gender === item.value)?.label ?? '',
   },
   { title: '邮箱', key: 'email', width: 150, ellipsis: { tooltip: true } },
   {
@@ -244,7 +248,13 @@ const columns = [
             size: 'small',
             type: 'primary',
             style: 'margin-left: 12px;',
-            onClick: () => handleOpen({ action: 'reset', title: '重置密码', row, onOk: onSave }),
+            onClick: () =>
+              handleOpen({
+                action: 'reset',
+                title: '重置密码',
+                row,
+                onOk: onSave,
+              }),
           },
           {
             default: () => '重置密码',
@@ -262,7 +272,8 @@ const columns = [
           },
           {
             default: () => '删除',
-            icon: () => h('i', { class: 'i-material-symbols:delete-outline text-14' }),
+            icon: () =>
+              h('i', { class: 'i-material-symbols:delete-outline text-14' }),
           },
         ),
       ]

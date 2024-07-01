@@ -1,11 +1,3 @@
-/**********************************
- * @Author: Ronnie Zhang
- * @LastEditor: Ronnie Zhang
- * @LastEditTime: 2023/12/05 21:25:07
- * @Email: zclzone@outlook.com
- * Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- **********************************/
-
 import { useAuthStore, usePermissionStore, useUserStore } from '@/store'
 import api from '@/api'
 import { getPermissions, getUserInfo } from '@/store/helper'
@@ -36,6 +28,7 @@ export function createPermissionGuard(router) {
       userStore.setUser(user)
       permissionStore.setPermissions(permissions)
       const routeComponents = import.meta.glob('@/views/**/*.vue')
+
       permissionStore.accessRoutes.forEach((route) => {
         route.component = routeComponents[route.component] || undefined
         !router.hasRoute(route.name) && router.addRoute(route)
