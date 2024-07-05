@@ -2,9 +2,14 @@
   <n-dropdown :options="options" @select="handleSelect">
     <div class="flex cursor-pointer items-center">
       <n-avatar round :size="36" :src="userStore.avatar" />
-      <div v-if="userStore.userInfo" class="ml-12 flex-col flex-shrink-0 items-center">
-        <span class="text-14">{{ userStore.nickName ?? userStore.username }}</span>
-        <span class="text-12 opacity-50">{{ userStore.address }}</span>
+      <div
+        v-if="userStore.userInfo"
+        class="ml-12 flex-col flex-shrink-0 items-center"
+      >
+        <span class="text-14">{{
+          userStore.displayName ?? userStore.userName
+        }}</span>
+        <span class="text-12 opacity-50">{{ userStore.department }}</span>
       </div>
     </div>
   </n-dropdown>
@@ -27,7 +32,9 @@ const options = reactive([
     label: '个人资料',
     key: 'profile',
     icon: () => h('i', { class: 'i-material-symbols:person-outline text-14' }),
-    show: computed(() => permissionStore.accessRoutes?.some(item => item.path === '/profile')),
+    show: computed(() =>
+      permissionStore.accessRoutes?.some(item => item.path === '/profile'),
+    ),
   },
   {
     label: '切换角色',

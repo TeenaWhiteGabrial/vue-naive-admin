@@ -15,8 +15,15 @@
     </template>
     <template #action>
       <div class="flex items-center">
-        <NButton :disabled="!userIds.length" type="error" @click="handleBatchRemove()">
-          <i v-if="userIds.length" class="i-material-symbols:delete-outline mr-4 text-18" />
+        <NButton
+          :disabled="!userIds.length"
+          type="error"
+          @click="handleBatchRemove()"
+        >
+          <i
+            v-if="userIds.length"
+            class="i-material-symbols:delete-outline mr-4 text-18"
+          />
           批量取消授权
         </NButton>
         <NButton
@@ -25,7 +32,10 @@
           type="primary"
           @click="handleBatchAdd()"
         >
-          <i v-if="userIds.length" class="i-line-md:confirm-circle mr-4 text-18" />
+          <i
+            v-if="userIds.length"
+            class="i-line-md:confirm-circle mr-4 text-18"
+          />
           批量授权
         </NButton>
       </div>
@@ -41,7 +51,7 @@
     >
       <MeQueryItem label="用户名" :label-width="50">
         <n-input
-          v-model:value="queryItems.username"
+          v-model:value="queryItems.userName"
           type="text"
           placeholder="请输入用户名"
           clearable
@@ -49,7 +59,11 @@
       </MeQueryItem>
 
       <MeQueryItem label="性别" :label-width="50">
-        <n-select v-model:value="queryItems.gender" clearable :options="genders" />
+        <n-select
+          v-model:value="queryItems.gender"
+          clearable
+          :options="genders"
+        />
       </MeQueryItem>
 
       <MeQueryItem label="状态" :label-width="50">
@@ -101,7 +115,7 @@ const columns = [
         src: avatar,
       }),
   },
-  { title: '用户名', key: 'username', width: 150, ellipsis: { tooltip: true } },
+  { title: '用户名', key: 'userName', width: 150, ellipsis: { tooltip: true } },
   {
     title: '角色',
     key: 'roles',
@@ -124,7 +138,8 @@ const columns = [
     title: '性别',
     key: 'gender',
     width: 80,
-    render: ({ gender }) => genders.find(item => gender === item.value)?.label ?? '',
+    render: ({ gender }) =>
+      genders.find(item => gender === item.value)?.label ?? '',
   },
   {
     title: '创建时间',
@@ -172,7 +187,8 @@ const columns = [
           },
           {
             default: () => '取消授权',
-            icon: () => h('i', { class: 'i-material-symbols:delete-outline text-14' }),
+            icon: () =>
+              h('i', { class: 'i-material-symbols:delete-outline text-14' }),
           },
         )
         : h(

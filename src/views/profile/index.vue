@@ -14,8 +14,13 @@
         <div class="ml-20">
           <div class="flex items-center text-16">
             <span>用户名:</span>
-            <span class="ml-12 opacity-80">{{ userStore.username }}</span>
-            <n-button class="ml-32" type="primary" text @click="pwdModalRef.open()">
+            <span class="ml-12 opacity-80">{{ userStore.userName }}</span>
+            <n-button
+              class="ml-32"
+              type="primary"
+              text
+              @click="pwdModalRef.open()"
+            >
               <i class="i-fe:edit mr-4" />
               修改密码
             </n-button>
@@ -47,13 +52,16 @@
         bordered
       >
         <n-descriptions-item label="昵称">
-          {{ userStore.nickName }}
+          {{ userStore.displayName }}
         </n-descriptions-item>
         <n-descriptions-item label="性别">
-          {{ genders.find((item) => item.value === userStore.userInfo?.gender)?.label ?? '未知' }}
+          {{
+            genders.find((item) => item.value === userStore.userInfo?.gender)
+              ?.label ?? "未知"
+          }}
         </n-descriptions-item>
-        <n-descriptions-item label="地址">
-          {{ userStore.userInfo?.address }}
+        <n-descriptions-item label="所属部门">
+          {{ userStore.userInfo?.department }}
         </n-descriptions-item>
         <n-descriptions-item label="邮箱">
           {{ userStore.userInfo?.email }}
@@ -61,11 +69,21 @@
       </n-descriptions>
     </n-card>
 
-    <MeModal ref="avatarModalRef" width="420px" title="更改头像" @ok="handleAvatarSave()">
+    <MeModal
+      ref="avatarModalRef"
+      width="420px"
+      title="更改头像"
+      @ok="handleAvatarSave()"
+    >
       <n-input v-model:value="newAvatar" />
     </MeModal>
 
-    <MeModal ref="pwdModalRef" title="修改密码" width="420px" @ok="handlePwdSave()">
+    <MeModal
+      ref="pwdModalRef"
+      title="修改密码"
+      width="420px"
+      @ok="handlePwdSave()"
+    >
       <n-form
         ref="pwdFormRef"
         :model="pwdForm"
@@ -73,18 +91,34 @@
         require-mark-placement="left"
       >
         <n-form-item label="原密码" path="oldPassword" :rule="required">
-          <n-input v-model:value="pwdForm.oldPassword" type="password" placeholder="请输入原密码" />
+          <n-input
+            v-model:value="pwdForm.oldPassword"
+            type="password"
+            placeholder="请输入原密码"
+          />
         </n-form-item>
         <n-form-item label="新密码" path="newPassword" :rule="required">
-          <n-input v-model:value="pwdForm.newPassword" type="password" placeholder="请输入新密码" />
+          <n-input
+            v-model:value="pwdForm.newPassword"
+            type="password"
+            placeholder="请输入新密码"
+          />
         </n-form-item>
       </n-form>
     </MeModal>
 
-    <MeModal ref="profileModalRef" title="修改资料" width="420px" @ok="handleProfileSave()">
+    <MeModal
+      ref="profileModalRef"
+      title="修改资料"
+      width="420px"
+      @ok="handleProfileSave()"
+    >
       <n-form ref="profileFormRef" :model="profileForm" label-placement="left">
-        <n-form-item label="昵称" path="nickName">
-          <n-input v-model:value="profileForm.nickName" placeholder="请输入昵称" />
+        <n-form-item label="昵称" path="displayName">
+          <n-input
+            v-model:value="profileForm.displayName"
+            placeholder="请输入昵称"
+          />
         </n-form-item>
         <n-form-item label="性别" path="gender">
           <n-select
@@ -93,8 +127,11 @@
             placeholder="请选择性别"
           />
         </n-form-item>
-        <n-form-item label="地址" path="address">
-          <n-input v-model:value="profileForm.address" placeholder="请输入地址" />
+        <n-form-item label="所属部门" path="department">
+          <n-input
+            v-model:value="profileForm.department"
+            placeholder="请输入所属部门"
+          />
         </n-form-item>
         <n-form-item label="邮箱" path="email">
           <n-input v-model:value="profileForm.email" placeholder="请输入邮箱" />
@@ -141,16 +178,15 @@ async function handleAvatarSave() {
 }
 
 const genders = [
-  { label: '保密', value: 0 },
-  { label: '男', value: 1 },
-  { label: '女', value: 2 },
+  { label: '男', value: 'male' },
+  { label: '女', value: 'female' },
 ]
 const [profileModalRef] = useModal()
 const [profileFormRef, profileForm, profileValidation] = useForm({
   id: userStore.userId,
-  nickName: userStore.nickName,
+  displayName: userStore.displayName,
   gender: userStore.userInfo?.gender ?? 0,
-  address: userStore.userInfo?.address,
+  department: userStore.userInfo?.department,
   email: userStore.userInfo?.email,
 })
 async function handleProfileSave() {

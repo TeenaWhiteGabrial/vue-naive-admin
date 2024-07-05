@@ -1,14 +1,9 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/12 09:03:32
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
   <MeModal ref="modalRef" title="请选择角色" width="360px" class="p-12">
-    <n-radio-group v-model:value="roleCode" class="cus-scroll-y max-h-420 w-full py-16">
+    <n-radio-group
+      v-model:value="roleCode"
+      class="cus-scroll-y max-h-420 w-full py-16"
+    >
       <n-space vertical :size="24" class="mx-12">
         <n-radio-button
           v-for="role in roles"

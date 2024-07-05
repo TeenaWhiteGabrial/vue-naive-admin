@@ -1,11 +1,3 @@
-/**********************************
- * @Author: Ronnie Zhang
- * @LastEditor: Ronnie Zhang
- * @LastEditTime: 2023/12/12 09:03:00
- * @Email: zclzone@outlook.com
- * Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- **********************************/
-
 import { useForm, useModal } from '.'
 
 const ACTIONS = {
@@ -14,7 +6,14 @@ const ACTIONS = {
   add: '新增',
 }
 
-export function useCrud({ name, initForm = {}, doCreate, doDelete, doUpdate, refresh }) {
+export function useCrud({
+  name,
+  initForm = {},
+  doCreate,
+  doDelete,
+  doUpdate,
+  refresh,
+}) {
   const modalAction = ref('')
   const [modalRef, okLoading] = useModal()
   const [modalFormRef, modalForm, validation] = useForm(initForm)

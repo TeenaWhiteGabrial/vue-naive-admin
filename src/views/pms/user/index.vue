@@ -1,7 +1,7 @@
 <template>
   <CommonPage>
     <template #action>
-      <NButton v-permission="'AddUser'" type="primary" @click="handleAdd()">
+      <NButton v-permission="'AddUser'" type="primary" @click="createUser()">
         <i class="i-material-symbols:add mr-4 text-18" />
         创建新用户
       </NButton>
@@ -14,30 +14,13 @@
       :columns="columns"
       :get-data="api.read"
     >
-      <MeQueryItem label="用户名" :label-width="50">
-        <n-input
-          v-model:value="queryItems.username"
-          type="text"
-          placeholder="请输入用户名"
-          clearable
-        />
-      </MeQueryItem>
-
-      <MeQueryItem label="性别" :label-width="50">
-        <n-select
-          v-model:value="queryItems.gender"
-          clearable
-          :options="genders"
-        />
-      </MeQueryItem>
-
       <MeQueryItem label="状态" :label-width="50">
         <n-select
-          v-model:value="queryItems.enable"
+          v-model:value="queryItems.status"
           clearable
           :options="[
-            { label: '启用', value: 1 },
-            { label: '停用', value: 0 },
+            { label: '在线', value: 'online' },
+            { label: '下线', value: 'offline' },
           ]"
         />
       </MeQueryItem>
@@ -54,7 +37,7 @@
       >
         <n-form-item
           label="用户名"
-          path="username"
+          path="userName"
           :rule="{
             required: true,
             message: '请输入用户名',
@@ -62,7 +45,7 @@
           }"
         >
           <n-input
-            v-model:value="modalForm.username"
+            v-model:value="modalForm.userName"
             :disabled="modalAction !== 'add'"
           />
         </n-form-item>
@@ -80,27 +63,30 @@
         </n-form-item>
 
         <n-form-item
-          v-if="['add', 'setRole'].includes(modalAction)"
-          label="角色"
-          path="roleIds"
+          v-if="['setRole'].includes(modalAction)"
+          label="权限"
+          path="role"
         >
           <n-select
-            v-model:value="modalForm.roleIds"
-            :options="roles"
+            v-model:value="modalForm.role"
+            :options="roleList"
             label-field="name"
-            value-field="id"
+            value-field="code"
             clearable
             filterable
-            multiple
           />
         </n-form-item>
-        <n-form-item v-if="modalAction === 'add'" label="状态" path="enable">
-          <NSwitch v-model:value="modalForm.enable">
+        <n-form-item v-if="modalAction === ''" label="状态" path="status">
+          <NSwitch
+            v-model:value="modalForm.status"
+            checked-value="online"
+            unchecked-value="offline"
+          >
             <template #checked>
-              启用
+              上线
             </template>
             <template #unchecked>
-              停用
+              下线
             </template>
           </NSwitch>
         </n-form-item>
@@ -114,8 +100,7 @@
 
 <script setup>
 import { NAvatar, NButton, NSwitch, NTag } from 'naive-ui'
-import api from './api'
-import { formatDateTime } from '@/utils'
+import api from '@/api/user'
 import { MeCrud, MeModal, MeQueryItem } from '@/components'
 import { useCrud } from '@/composables'
 
@@ -129,25 +114,20 @@ onMounted(() => {
   $table.value?.handleSearch()
 })
 
-const genders = [
-  { label: '男', value: 1 },
-  { label: '女', value: 2 },
-]
-const roles = ref([])
-api.getAllRoles().then(({ data = [] }) => (roles.value = data))
+const roleList = ref([])
+api.getAllRoles({}).then(({ data = [] }) => (roleList.value = data))
 
 const {
   modalRef,
   modalFormRef,
   modalForm,
   modalAction,
-  handleAdd,
   handleDelete,
   handleOpen,
   handleSave,
 } = useCrud({
   name: '用户',
-  initForm: { enable: true },
+  initForm: { status: 'online' },
   doCreate: api.create,
   doDelete: api.delete,
   doUpdate: api.update,
@@ -165,58 +145,58 @@ const columns = [
         src: avatar,
       }),
   },
-  { title: '用户名', key: 'username', width: 150, ellipsis: { tooltip: true } },
-  // {
-  //   title: "角色",
-  //   key: "roles",
-  //   width: 200,
-  //   ellipsis: { tooltip: true },
-  //   render: ({ roles }) => {
-  //     if (roles?.length) {
-  //       return roles.map((item, index) =>
-  //         h(
-  //           NTag,
-  //           { type: "success", style: index > 0 ? "margin-left: 8px;" : "" },
-  //           { default: () => item.name }
-  //         )
-  //       );
-  //     }
-  //     return "暂无角色";
-  //   },
-  // },
+  { title: '账号', key: 'userName', width: 100, ellipsis: { tooltip: true } },
   {
-    title: '性别',
-    key: 'gender',
+    title: '姓名',
+    key: 'displayName',
     width: 80,
-    render: ({ gender }) =>
-      genders.find(item => gender === item.value)?.label ?? '',
+    ellipsis: { tooltip: true },
+  },
+  {
+    title: '所属部门',
+    key: 'department',
+    width: 100,
+    ellipsis: { tooltip: true },
+  },
+  {
+    title: '权限',
+    key: 'role',
+    width: 100,
+    ellipsis: { tooltip: true },
+    render: ({ role }) => {
+      if (role) {
+        return h(
+          NTag,
+          { type: 'success' },
+          {
+            default: () =>
+              roleList.value.find(item => role === item.code)?.name ?? '',
+          },
+        )
+      }
+      return '暂无权限'
+    },
   },
   { title: '邮箱', key: 'email', width: 150, ellipsis: { tooltip: true } },
   {
-    title: '创建时间',
-    key: 'createDate',
-    width: 180,
-    render(row) {
-      return h('span', formatDateTime(row.createTime))
-    },
-  },
-  {
     title: '状态',
-    key: 'enable',
+    key: 'status',
     width: 120,
     render: row =>
       h(
         NSwitch,
         {
-          size: 'small',
-          rubberBand: false,
-          value: row.enable,
-          loading: !!row.enableLoading,
-          onUpdateValue: () => handleEnable(row),
+          'size': 'small',
+          'rubberBand': false,
+          'disabled': true,
+          'value': row.status,
+          'loading': !!row.enableLoading,
+          'checked-value': 'online',
+          'unchecked-value': 'offline',
         },
         {
-          checked: () => '启用',
-          unchecked: () => '停用',
+          checked: () => '在线',
+          unchecked: () => '下线',
         },
       ),
   },
@@ -238,7 +218,7 @@ const columns = [
             onClick: () => handleOpenRolesSet(row),
           },
           {
-            default: () => '分配角色',
+            default: () => '授权',
             icon: () => h('i', { class: 'i-carbon:user-role text-14' }),
           },
         ),
@@ -268,10 +248,11 @@ const columns = [
             size: 'small',
             type: 'error',
             style: 'margin-left: 12px;',
-            onClick: () => handleDelete(row.id),
+            onClick: () => handleDelete(row.userId),
           },
           {
             default: () => '删除',
+
             icon: () =>
               h('i', { class: 'i-material-symbols:delete-outline text-14' }),
           },
@@ -281,34 +262,21 @@ const columns = [
   },
 ]
 
-async function handleEnable(row) {
-  row.enableLoading = true
-  try {
-    await api.update({ id: row.id, enable: !row.enable })
-    row.enableLoading = false
-    $message.success('操作成功')
-    $table.value?.handleSearch()
-  }
-  catch (error) {
-    row.enableLoading = false
-  }
-}
-
-function handleOpenRolesSet(row) {
-  const roleIds = row.roles.map(item => item.id)
-  handleOpen({
-    action: 'setRole',
-    title: '分配角色',
-    row: { id: row.id, username: row.username, roleIds },
-    onOk: onSave,
-  })
-}
-
 function onSave() {
-  if (modalAction.value === 'setRole') {
+  if (modalAction.value === 'add') {
+    const result = {
+      userName: modalForm.value.userName,
+      password: btoa(modalForm.value.password),
+    }
+    return handleSave({
+      api: () => api.create(result),
+      cb: () => $message.success('用户添加成功'),
+    })
+  }
+  else if (modalAction.value === 'setRole') {
     return handleSave({
       api: () => api.update(modalForm.value),
-      cb: () => $message.success('分配成功'),
+      cb: () => $message.success('授权成功'),
     })
   }
   else if (modalAction.value === 'reset') {
@@ -318,5 +286,23 @@ function onSave() {
     })
   }
   handleSave()
+}
+
+function handleOpenRolesSet(row) {
+  handleOpen({
+    action: 'setRole',
+    title: '分配权限',
+    row: { userId: row.userId, userName: row.userName, role: row.role },
+    onOk: onSave,
+  })
+}
+
+function createUser() {
+  handleOpen({
+    action: 'add',
+    title: '新增管理员',
+    row: { userName: '', password: '' },
+    onOk: onSave,
+  })
 }
 </script>

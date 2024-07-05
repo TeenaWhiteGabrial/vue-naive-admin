@@ -8,17 +8,17 @@ export const useUserStore = defineStore('user', {
     userId() {
       return this.userInfo?.id
     },
-    username() {
-      return this.userInfo?.username
+    userName() {
+      return this.userInfo?.userName
     },
-    nickName() {
-      return this.userInfo?.nickName
+    displayName() {
+      return this.userInfo?.displayName
     },
     avatar() {
       return this.userInfo?.avatar
     },
-    address() {
-      return this.userInfo?.address
+    department() {
+      return this.userInfo?.department
     },
     currentRole() {
       return this.userInfo?.currentRole || {}

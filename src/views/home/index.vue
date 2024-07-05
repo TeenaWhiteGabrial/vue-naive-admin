@@ -3,10 +3,15 @@
     <div class="flex">
       <n-card class="min-w-200 w-30%">
         <div class="flex items-center">
-          <n-avatar round :size="60" :src="userStore.avatar" class="flex-shrink-0" />
+          <n-avatar
+            round
+            :size="60"
+            :src="userStore.avatar"
+            class="flex-shrink-0"
+          />
           <div class="ml-20 flex-col">
             <span class="text-20 opacity-80">
-              Hello, {{ userStore.nickName ?? userStore.username }}
+              Hello, {{ userStore.displayName ?? userStore.userName }}
             </span>
             <!-- <span class="mt-4 opacity-50">当前角色：{{ userStore.currentRole?.name }}</span> -->
           </div>
@@ -32,8 +37,8 @@
         </template>
 
         <p class="opacity-60">
-          这是一款极简风格的后台管理模板，包含前后端解决方案，前端使用 Vite + Vue3 + Pinia +
-          Unocss，后端使用 Nestjs + TypeOrm +
+          这是一款极简风格的后台管理模板，包含前后端解决方案，前端使用 Vite +
+          Vue3 + Pinia + Unocss，后端使用 Nestjs + TypeOrm +
           MySql，简单易用，赏心悦目，历经十几次重构和细节打磨，诚意满满！！
         </p>
         <footer class="mt-12 flex items-center justify-end">
@@ -153,7 +158,11 @@
 
 <script setup>
 import * as echarts from 'echarts/core'
-import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
+import {
+  GridComponent,
+  LegendComponent,
+  TooltipComponent,
+} from 'echarts/components'
 import { BarChart, LineChart, PieChart } from 'echarts/charts'
 import { UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
@@ -190,7 +199,20 @@ const trendOption = {
   xAxis: [
     {
       type: 'category',
-      data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+      data: [
+        '1月',
+        '2月',
+        '3月',
+        '4月',
+        '5月',
+        '6月',
+        '7月',
+        '8月',
+        '9月',
+        '10月',
+        '11月',
+        '12月',
+      ],
       axisPointer: {
         type: 'shadow',
       },

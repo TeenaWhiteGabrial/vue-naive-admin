@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { defineConfig, loadEnv } from 'vite'
 import Vue from '@vitejs/plugin-vue'
-import VueDevTools from 'vite-plugin-vue-devtools' // 这个插件会屏蔽掉vue devtools 插件
+// import VueDevTools from "vite-plugin-vue-devtools"; // 这个插件会屏蔽掉vue devtools 插件
 import Unocss from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     base: VITE_PUBLIC_PATH || '/',
     plugins: [
       Vue(),
-      VueDevTools(),
+      // VueDevTools(),
       Unocss(),
       AutoImport({
         imports: ['vue', 'vue-router'],
@@ -53,7 +53,8 @@ export default defineConfig(({ mode }) => {
           configure: (proxy, options) => {
             // 配置此项可在响应头中看到请求的真实地址
             proxy.on('proxyRes', (proxyRes, req) => {
-              proxyRes.headers['x-real-url'] = new URL(req.url || '', options.target)?.href || ''
+              proxyRes.headers['x-real-url']
+                = new URL(req.url || '', options.target)?.href || ''
             })
           },
         },

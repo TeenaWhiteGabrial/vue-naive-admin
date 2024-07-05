@@ -1,18 +1,16 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/05 21:28:36
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
-  <div class="wh-full flex-col bg-[url(@/assets/images/login_bg.webp)] bg-cover">
+  <div
+    class="wh-full flex-col bg-[url(@/assets/images/login_bg.webp)] bg-cover"
+  >
     <div
       class="m-auto max-w-700 min-w-345 f-c-c rounded-8 bg-opacity-20 bg-cover p-12 card-shadow auto-bg"
     >
       <div class="hidden w-380 px-20 py-35 md:block">
-        <img src="@/assets/images/login_banner.webp" class="w-full" alt="login_banner">
+        <img
+          src="@/assets/images/login_banner.webp"
+          class="w-full"
+          alt="login_banner"
+        >
       </div>
 
       <div class="w-320 flex-col px-20 py-32">
@@ -21,7 +19,7 @@
           {{ title }}
         </h2>
         <n-input
-          v-model:value="loginInfo.username"
+          v-model:value="loginInfo.userName"
           autofocus
           class="mt-32 h-40 items-center"
           placeholder="请输入用户名"
@@ -112,7 +110,7 @@ const route = useRoute()
 const title = import.meta.env.VITE_TITLE
 
 const loginInfo = ref({
-  username: '',
+  userName: '',
   password: '',
 })
 
@@ -123,13 +121,13 @@ const initCaptcha = throttle(() => {
 
 const localLoginInfo = lStorage.get('loginInfo')
 if (localLoginInfo) {
-  loginInfo.value.username = localLoginInfo.username || ''
+  loginInfo.value.userName = localLoginInfo.userName || ''
   loginInfo.value.password = localLoginInfo.password || ''
 }
 initCaptcha()
 
 function quickLogin() {
-  loginInfo.value.username = 'admin'
+  loginInfo.value.userName = 'admin'
   loginInfo.value.password = '123456'
   handleLogin(true)
 }
@@ -137,17 +135,22 @@ function quickLogin() {
 const isRemember = useStorage('isRemember', true)
 const loading = ref(false)
 async function handleLogin(isQuick) {
-  const { username, password, captcha } = loginInfo.value
-  if (!username || !password)
+  const { userName, password, captcha } = loginInfo.value
+  if (!userName || !password)
     return $message.warning('请输入用户名和密码')
   if (!isQuick && !captcha)
     return $message.warning('请输入验证码')
   try {
     loading.value = true
     $message.loading('正在验证，请稍后...', { key: 'login' })
-    const { data } = await api.login({ username, password: password.toString(), captcha, isQuick })
+    const { data } = await api.login({
+      userName,
+      password: btoa(password.toString()),
+      captcha,
+      isQuick,
+    })
     if (isRemember.value) {
-      lStorage.set('loginInfo', { username, password })
+      lStorage.set('loginInfo', { userName, password })
     }
     else {
       lStorage.remove('loginInfo')
