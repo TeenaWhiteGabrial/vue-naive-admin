@@ -1,11 +1,3 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/16 18:50:48
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
   <n-dropdown
     :show="show"
@@ -54,7 +46,8 @@ const options = computed(() => [
   {
     label: '关闭',
     key: 'close',
-    disabled: tabStore.tabs.length <= 1,
+    disabled:
+      tabStore.tabs.length <= 1 || props.currentPath === tabStore.tabs[0].path,
     icon: () => h('i', { class: 'i-mdi:close text-14' }),
   },
   {
@@ -66,7 +59,8 @@ const options = computed(() => [
   {
     label: '关闭左侧',
     key: 'close-left',
-    disabled: tabStore.tabs.length <= 1 || props.currentPath === tabStore.tabs[0].path,
+    disabled:
+      tabStore.tabs.length <= 1 || props.currentPath === tabStore.tabs[0].path,
     icon: () => h('i', { class: 'i-mdi:arrow-expand-left text-14' }),
   },
   {

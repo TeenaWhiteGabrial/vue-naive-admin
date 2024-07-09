@@ -62,14 +62,18 @@ export const useTabStore = defineStore('tab', {
       }
     },
     removeOther(curPath = this.activeTab) {
-      this.setTabs(this.tabs.filter(tab => tab.path === curPath || tab.affix))
+      this.setTabs(
+        this.tabs.filter(tab => tab.path === curPath || tab.affix),
+      )
       if (curPath !== this.activeTab) {
         useRouterStore().router?.push(this.tabs[this.tabs.length - 1].path)
       }
     },
     removeLeft(curPath) {
-      const curIndex = this.tabs.findIndex(item => item.path === curPath || item.affix)
-      const filterTabs = this.tabs.filter((item, index) => index >= curIndex)
+      const curIndex = this.tabs.findIndex(item => item.path === curPath)
+      const filterTabs = this.tabs.filter(
+        (item, index) => index >= curIndex || item.affix,
+      )
       this.setTabs(filterTabs)
       if (!filterTabs.find(item => item.path === this.activeTab)) {
         useRouterStore().router?.push(filterTabs[filterTabs.length - 1].path)

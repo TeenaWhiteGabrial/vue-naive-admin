@@ -6,7 +6,7 @@ export default {
   // 登出
   logout: () => request.post('/auth/logout'),
   // 获取用户信息
-  getUser: () => request.get('/user/info/simple'),
+  getUser: () => request.post('/user/info/all'),
   // 切换当前角色
   switchCurrentRole: role =>
     request.post(`/auth/current-role/switch/${role}`),

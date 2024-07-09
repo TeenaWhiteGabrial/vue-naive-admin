@@ -5,7 +5,7 @@ export default {
   read: (params = {}) => request.post('/user/list', { params }),
   update: data => request.post(`/user/update/${data.userId}`, data),
   delete: id => request.post(`/user/delete/${id}`),
-  resetPwd: (id, data) => request.patch(`/user/password/reset/${id}`, data),
+  resetPwd: data => request.post(`/user/resetPassword`, data),
 
   getAllRoles: data => request.post('/role/list', data),
 }

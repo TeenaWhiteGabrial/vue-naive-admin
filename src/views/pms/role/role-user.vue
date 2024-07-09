@@ -99,8 +99,9 @@ onMounted(() => {
 })
 
 const genders = [
-  { label: '男', value: 1 },
-  { label: '女', value: 2 },
+  { label: '男', value: 'male' },
+  { label: '女', value: 'female' },
+  { label: '保密', value: 'secret' },
 ]
 
 const columns = [

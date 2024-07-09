@@ -1,11 +1,3 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2024/04/01 15:52:40
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
   <CommonPage>
     <template #action>
@@ -23,7 +15,12 @@
       :get-data="api.read"
     >
       <MeQueryItem label="角色名" :label-width="50">
-        <n-input v-model:value="queryItems.name" type="text" placeholder="请输入角色名" clearable />
+        <n-input
+          v-model:value="queryItems.name"
+          type="text"
+          placeholder="请输入角色名"
+          clearable
+        />
       </MeQueryItem>
       <MeQueryItem label="状态" :label-width="50">
         <n-select
@@ -64,7 +61,10 @@
             trigger: ['input', 'blur'],
           }"
         >
-          <n-input v-model:value="modalForm.code" :disabled="modalAction !== 'add'" />
+          <n-input
+            v-model:value="modalForm.code"
+            :disabled="modalAction !== 'add'"
+          />
         </n-form-item>
         <n-form-item label="权限" path="permissionIds">
           <n-tree
@@ -113,15 +113,22 @@ onMounted(() => {
   $table.value?.handleSearch()
 })
 
-const { modalRef, modalFormRef, modalAction, modalForm, handleAdd, handleDelete, handleEdit }
-  = useCrud({
-    name: '角色',
-    doCreate: api.create,
-    doDelete: api.delete,
-    doUpdate: api.update,
-    initForm: { enable: true },
-    refresh: (_, keepCurrentPage) => $table.value?.handleSearch(keepCurrentPage),
-  })
+const {
+  modalRef,
+  modalFormRef,
+  modalAction,
+  modalForm,
+  handleAdd,
+  handleDelete,
+  handleEdit,
+} = useCrud({
+  name: '角色',
+  doCreate: api.create,
+  doDelete: api.delete,
+  doUpdate: api.update,
+  initForm: { enable: true },
+  refresh: (_, keepCurrentPage) => $table.value?.handleSearch(keepCurrentPage),
+})
 
 const columns = [
   { title: '角色名', key: 'name' },
@@ -161,7 +168,10 @@ const columns = [
             type: 'primary',
             secondary: true,
             onClick: () =>
-              router.push({ path: `/pms/role/user/${row.id}`, query: { roleName: row.name } }),
+              router.push({
+                path: `/pms/role/user/${row.id}`,
+                query: { roleName: row.name },
+              }),
           },
           {
             default: () => '分配用户',
@@ -179,7 +189,8 @@ const columns = [
           },
           {
             default: () => '编辑',
-            icon: () => h('i', { class: 'i-material-symbols:edit-outline text-14' }),
+            icon: () =>
+              h('i', { class: 'i-material-symbols:edit-outline text-14' }),
           },
         ),
 
@@ -194,7 +205,8 @@ const columns = [
           },
           {
             default: () => '删除',
-            icon: () => h('i', { class: 'i-material-symbols:delete-outline text-14' }),
+            icon: () =>
+              h('i', { class: 'i-material-symbols:delete-outline text-14' }),
           },
         ),
       ]
@@ -216,5 +228,7 @@ async function handleEnable(row) {
 }
 
 const permissionTree = ref([])
-api.getAllPermissionTree().then(({ data = [] }) => (permissionTree.value = data))
+api
+  .getAllPermissionTree()
+  .then(({ data = [] }) => (permissionTree.value = data))
 </script>

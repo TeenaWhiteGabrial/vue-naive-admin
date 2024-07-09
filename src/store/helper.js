@@ -3,8 +3,20 @@ import api from '@/api'
 
 export async function getUserInfo() {
   const res = await api.getUser()
-  const { userId, userName, avatar, displayName, department, role }
-    = res.data || {}
+  const {
+    userId,
+    userName,
+    avatar,
+    displayName,
+    department,
+    role,
+    description,
+    email,
+    gender,
+    identity,
+    level,
+    status,
+  } = res.data || {}
   return {
     userId,
     userName,
@@ -12,6 +24,12 @@ export async function getUserInfo() {
     displayName,
     department,
     role,
+    description,
+    email,
+    gender,
+    identity,
+    level,
+    status,
   }
 }
 

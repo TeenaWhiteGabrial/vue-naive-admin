@@ -43,7 +43,7 @@
           </template>
         </n-input>
 
-        <div class="mt-20 flex items-center">
+        <!-- <div class="mt-20 flex items-center">
           <n-input
             v-model:value="loginInfo.captcha"
             class="h-40 items-center"
@@ -62,8 +62,8 @@
             height="40"
             class="ml-12 w-80 cursor-pointer"
             @click="initCaptcha"
-          >
-        </div>
+          />
+        </div> -->
 
         <n-checkbox
           class="mt-20"
@@ -135,18 +135,17 @@ function quickLogin() {
 const isRemember = useStorage('isRemember', true)
 const loading = ref(false)
 async function handleLogin(isQuick) {
-  const { userName, password, captcha } = loginInfo.value
+  const { userName, password } = loginInfo.value
   if (!userName || !password)
     return $message.warning('请输入用户名和密码')
-  if (!isQuick && !captcha)
-    return $message.warning('请输入验证码')
+  // if (!isQuick && !captcha) return $message.warning("请输入验证码");
   try {
     loading.value = true
     $message.loading('正在验证，请稍后...', { key: 'login' })
     const { data } = await api.login({
       userName,
-      password: btoa(password.toString()),
-      captcha,
+      password: password.toString(),
+      // captcha,
       isQuick,
     })
     if (isRemember.value) {

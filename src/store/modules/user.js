@@ -6,7 +6,7 @@ export const useUserStore = defineStore('user', {
   }),
   getters: {
     userId() {
-      return this.userInfo?.id
+      return this.userInfo?.userId
     },
     userName() {
       return this.userInfo?.userName

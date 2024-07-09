@@ -266,7 +266,7 @@ function onSave() {
   if (modalAction.value === 'add') {
     const result = {
       userName: modalForm.value.userName,
-      password: btoa(modalForm.value.password),
+      password: modalForm.value.password,
     }
     return handleSave({
       api: () => api.create(result),
@@ -281,7 +281,7 @@ function onSave() {
   }
   else if (modalAction.value === 'reset') {
     return handleSave({
-      api: () => api.resetPwd(modalForm.value.id, modalForm.value),
+      api: () => api.resetPwd(modalForm.value),
       cb: () => $message.success('密码重置成功'),
     })
   }

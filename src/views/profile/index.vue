@@ -1,11 +1,3 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/05 21:30:11
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
   <AppPage show-footer>
     <n-card>
@@ -54,6 +46,12 @@
         <n-descriptions-item label="昵称">
           {{ userStore.displayName }}
         </n-descriptions-item>
+        <n-descriptions-item label="身份">
+          {{ `【${userStore.userInfo?.identity ?? "未定"}】` }}
+        </n-descriptions-item>
+        <n-descriptions-item label="签名">
+          {{ userStore.userInfo?.description }}
+        </n-descriptions-item>
         <n-descriptions-item label="性别">
           {{
             genders.find((item) => item.value === userStore.userInfo?.gender)
@@ -62,6 +60,9 @@
         </n-descriptions-item>
         <n-descriptions-item label="所属部门">
           {{ userStore.userInfo?.department }}
+        </n-descriptions-item>
+        <n-descriptions-item label="职级">
+          {{ `P${userStore.userInfo?.level ?? "_"}` }}
         </n-descriptions-item>
         <n-descriptions-item label="邮箱">
           {{ userStore.userInfo?.email }}
@@ -117,15 +118,31 @@
         <n-form-item label="昵称" path="displayName">
           <n-input
             v-model:value="profileForm.displayName"
-            placeholder="请输入昵称"
+            placeholder="请输入昵称~"
+          />
+        </n-form-item>
+        <n-form-item label="身份" path="identity">
+          <n-input
+            v-model:value="profileForm.identity"
+            placeholder="请输入身份~"
+          />
+        </n-form-item>
+        <n-form-item label="签名" path="description">
+          <n-input
+            v-model:value="profileForm.description"
+            placeholder="写一段签名吧~"
           />
         </n-form-item>
         <n-form-item label="性别" path="gender">
           <n-select
             v-model:value="profileForm.gender"
-            :options="genders"
             placeholder="请选择性别"
+            clearable
+            :options="genders"
           />
+        </n-form-item>
+        <n-form-item label="邮箱" path="email">
+          <n-input v-model:value="profileForm.email" placeholder="请输入邮箱" />
         </n-form-item>
         <n-form-item label="所属部门" path="department">
           <n-input
@@ -133,8 +150,13 @@
             placeholder="请输入所属部门"
           />
         </n-form-item>
-        <n-form-item label="邮箱" path="email">
-          <n-input v-model:value="profileForm.email" placeholder="请输入邮箱" />
+        <n-form-item label="职级" path="level">
+          <n-input-number
+            v-model:value="profileForm.level"
+            clearable
+            :precision="0"
+            placeholder="请输入职级"
+          />
         </n-form-item>
       </n-form>
     </MeModal>
@@ -142,7 +164,7 @@
 </template>
 
 <script setup>
-import api from './api'
+import api from '@/api/user'
 import { MeModal } from '@/components'
 import { useForm, useModal } from '@/composables'
 import { useUserStore } from '@/store'
@@ -172,7 +194,7 @@ async function handleAvatarSave() {
     $message.error('请输入头像地址')
     return false
   }
-  await api.updateProfile({ id: userStore.userId, avatar: newAvatar.value })
+  await api.update({ userId: userStore.userId, avatar: newAvatar.value })
   $message.success('头像修改成功')
   refreshUserInfo()
 }
@@ -180,18 +202,19 @@ async function handleAvatarSave() {
 const genders = [
   { label: '男', value: 'male' },
   { label: '女', value: 'female' },
+  { label: '保密', value: 'secret' },
 ]
 const [profileModalRef] = useModal()
 const [profileFormRef, profileForm, profileValidation] = useForm({
-  id: userStore.userId,
+  userId: userStore.userId,
   displayName: userStore.displayName,
-  gender: userStore.userInfo?.gender ?? 0,
+  gender: userStore.userInfo?.gender ?? '',
   department: userStore.userInfo?.department,
   email: userStore.userInfo?.email,
 })
 async function handleProfileSave() {
   await profileValidation()
-  await api.updateProfile(profileForm.value)
+  await api.update(profileForm.value)
   $message.success('资料修改成功')
   refreshUserInfo()
 }
