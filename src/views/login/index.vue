@@ -127,8 +127,8 @@ if (localLoginInfo) {
 initCaptcha()
 
 function quickLogin() {
-  loginInfo.value.userName = 'admin'
-  loginInfo.value.password = '123456'
+  loginInfo.value.userName = 'xing'
+  loginInfo.value.password = 'yinheqiubangxia'
   handleLogin(true)
 }
 
