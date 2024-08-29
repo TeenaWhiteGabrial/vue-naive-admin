@@ -58,7 +58,7 @@ export const useTabStore = defineStore('tab', {
     async removeTab(path) {
       this.setTabs(this.tabs.filter(tab => tab.path !== path))
       if (path === this.activeTab) {
-        useRouterStore().router?.push(this.tabs[this.tabs.length - 1].path)
+        useRouterStore().router?.push(this.tabs[this.tabs.length - 1]?.path)
       }
     },
     removeOther(curPath = this.activeTab) {
@@ -66,7 +66,7 @@ export const useTabStore = defineStore('tab', {
         this.tabs.filter(tab => tab.path === curPath || tab.affix),
       )
       if (curPath !== this.activeTab) {
-        useRouterStore().router?.push(this.tabs[this.tabs.length - 1].path)
+        useRouterStore().router?.push(this.tabs[this.tabs.length - 1]?.path)
       }
     },
     removeLeft(curPath) {
