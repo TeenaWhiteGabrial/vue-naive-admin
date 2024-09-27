@@ -128,7 +128,7 @@ initCaptcha()
 
 function quickLogin() {
   loginInfo.value.userName = 'xing'
-  loginInfo.value.password = 'yinheqiubangxia'
+  loginInfo.value.password = '1234'
   handleLogin(true)
 }
 
@@ -138,7 +138,7 @@ async function handleLogin(isQuick) {
   const { userName, password } = loginInfo.value
   if (!userName || !password)
     return $message.warning('请输入用户名和密码')
-  // if (!isQuick && !captcha) return $message.warning("请输入验证码");
+    // if (!isQuick && !captcha) return $message.warning("请输入验证码");
   try {
     loading.value = true
     $message.loading('正在验证，请稍后...', { key: 'login' })
