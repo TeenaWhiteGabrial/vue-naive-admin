@@ -84,19 +84,19 @@ const props = defineProps({
   },
   modalStyle: {
     type: Object,
-    default: () => {},
+    default: () => { },
   },
   contentStyle: {
     type: Object,
-    default: () => {},
+    default: () => { },
   },
   onOk: {
     type: Function,
-    default: () => {},
+    default: () => { },
   },
   onCancel: {
     type: Function,
-    default: () => {},
+    default: () => { },
   },
 })
 // 声明一个show变量，用于控制模态框的显示与隐藏

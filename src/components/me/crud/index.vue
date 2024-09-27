@@ -41,6 +41,7 @@ import { utils, writeFile } from 'xlsx'
 
 const props = defineProps({
   /**
+   * `
    * @remote true: 后端分页  false： 前端分页
    */
   remote: {

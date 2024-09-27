@@ -10,7 +10,7 @@
     <MeCrud
       ref="$table"
       v-model:query-items="queryItems"
-      :scroll-x="1200"
+      :scroll-x="600"
       :columns="columns"
       :get-data="api.read"
     >
@@ -97,12 +97,12 @@ const {
 })
 
 const columns = [
-  { title: '角色名', width: 120, key: 'name' },
-  { title: '角色编码', width: 220, key: 'code' },
+  { title: '角色名', width: 200, key: 'name' },
+  { title: '角色编码', width: 200, key: 'code' },
   {
     title: '操作',
     key: 'actions',
-    width: 220,
+    width: 200,
     align: 'right',
     fixed: 'right',
     render(row) {
