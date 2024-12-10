@@ -1,19 +1,13 @@
-<!--------------------------------
- - @Author: Ronnie Zhang
- - @LastEditor: Ronnie Zhang
- - @LastEditTime: 2023/12/05 21:28:02
- - @Email: zclzone@outlook.com
- - Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- --------------------------------->
-
 <template>
   <CommonPage>
     <n-upload
       class="mx-auto w-[75%] p-20 text-center"
-      :custom-request="handleUpload"
       :show-file-list="false"
+      :action="actionUrl"
+      :data="uploadData"
       accept=".png,.jpg,.jpeg"
       @before-upload="onBeforeUpload"
+      @finish="handleFinish"
     >
       <n-upload-dragger>
         <div class="h-150 f-c-c flex-col">
@@ -57,41 +51,50 @@
 
 <script setup>
 import { useClipboard } from '@vueuse/core'
+import qiniu from '@/api/qiniu'
 
 defineOptions({ name: 'ImgUpload' })
 
 const { copy, copied } = useClipboard()
-
-const imgList = reactive([
-  { url: 'https://cdn.isme.top/images/5c23d52f880511ebb6edd017c2d2eca2.jpg' },
-  { url: 'https://cdn.isme.top/images/5c23d52f880511ebb6edd017c2d2eca2.jpg' },
-  { url: 'https://cdn.isme.top/images/5c23d52f880511ebb6edd017c2d2eca2.jpg' },
-  { url: 'https://cdn.isme.top/images/5c23d52f880511ebb6edd017c2d2eca2.jpg' },
-])
+const actionUrl = import.meta.env.VITE_QINIU_UPLOAD // 上传地址
+const imgList = reactive([]) // 图片列表
+const uploadData = ref({ // 上传信息
+  key: '',
+  token: '',
+})
 
 watch(copied, (val) => {
   val && $message.success('已复制到剪切板')
 })
 
-function onBeforeUpload({ file }) {
+async function onBeforeUpload({ file }) {
   if (!file.file?.type.startsWith('image/')) {
     $message.error('只能上传图片')
     return false
   }
-  return true
+  // 获取上传凭证
+  const res = await qiniu.getUploadToken()
+  if (res.code === 0) {
+    uploadData.value.key = `${file.id}${file.name}`
+    uploadData.value.token = res.data.token
+    return true
+  }
+  else {
+    $message.error('上传凭证获取异常')
+    return false
+  }
 }
 
-async function handleUpload({ file, onFinish }) {
-  if (!file || !file.type) {
-    $message.error('请选择文件')
-  }
-
-  // 模拟上传
-  $message.loading('上传中...')
-  setTimeout(() => {
+function handleFinish({ file, event }) {
+  if (event && event.target && event.target.status === 200) {
+    // 假设服务器返回的是 JSON 格式，包含文件的 URL
+    const response = JSON.parse(event.target.responseText)
+    const fileUrl = response.url // 假设返回的 JSON 对象中有一个 url 字段
     $message.success('上传成功')
-    imgList.push({ fileName: file.name, url: URL.createObjectURL(file.file) })
-    onFinish()
-  }, 1500)
+    imgList.push({ fileName: file.name, url: fileUrl })
+  }
+  else {
+    $message.error('上传失败')
+  }
 }
 </script>
