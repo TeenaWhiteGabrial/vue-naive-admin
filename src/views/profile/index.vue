@@ -74,9 +74,12 @@
       ref="avatarModalRef"
       width="420px"
       title="更改头像"
+      :mask-closable="false"
+      :on-close="handleAvatarClose()"
+      :on-open="handleAvatarOpen()"
       @ok="handleAvatarSave()"
     >
-      <n-input v-model:value="newAvatar" />
+      <UploadImage :default-list="avatarList" @upload-success="uploadSuccess" />
     </MeModal>
 
     <MeModal
@@ -165,7 +168,7 @@
 
 <script setup>
 import api from '@/api/user'
-import { MeModal } from '@/components'
+import { MeModal, UploadImage } from '@/components'
 import { useForm, useModal } from '@/composables'
 import { useUserStore } from '@/store'
 import { getUserInfo } from '@/store/helper'
@@ -189,14 +192,28 @@ async function handlePwdSave() {
 
 const newAvatar = ref(userStore.avatar)
 const [avatarModalRef] = useModal()
+const avatarList = ref([])
 async function handleAvatarSave() {
   if (!newAvatar.value) {
-    $message.error('请输入头像地址')
+    $message.error('请上传头像')
     return false
   }
   await api.update({ userId: userStore.userId, avatar: newAvatar.value })
   $message.success('头像修改成功')
   refreshUserInfo()
+}
+// 打开头像上传框
+function handleAvatarOpen() {
+  avatarList.value = [{ status: 'finished', url: newAvatar }]
+}
+// 关闭头像上传框
+function handleAvatarClose() {
+  avatarList.value = []
+}
+
+// 上传成功,暂存新头像
+function uploadSuccess(fileUrl) {
+  newAvatar.value = fileUrl[0].url
 }
 
 const genders = [

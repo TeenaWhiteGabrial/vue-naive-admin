@@ -2,69 +2,46 @@
   <CommonPage>
     <n-upload
       class="mx-auto w-[75%] p-20 text-center"
-      :show-file-list="false"
+      :show-file-list="true"
+      :default-file-list="imgList"
       :action="actionUrl"
       :data="uploadData"
-      accept=".png,.jpg,.jpeg"
+      :max="max"
+      :accept="accessList"
+      list-type="image-card"
       @before-upload="onBeforeUpload"
       @finish="handleFinish"
     >
       <n-upload-dragger>
         <div class="h-150 f-c-c flex-col">
-          <i class="i-mdi:upload mb-12 text-68 color-primary" />
+          <i class="i-mdi:upload mt-12 text-28 color-primary" />
           <n-text class="text-14 color-gray">
-            点击或者拖动文件到该区域来上传
+            点击或者拖动上传
           </n-text>
         </div>
       </n-upload-dragger>
     </n-upload>
-
-    <n-card v-if="imgList && imgList.length" class="mt-16 items-center">
-      <n-image-group>
-        <n-space justify="space-between" align="center">
-          <n-card v-for="(item, index) in imgList" :key="index" class="w-280 hover:card-shadow">
-            <div class="h-160 f-c-c">
-              <n-image width="200" :src="item.url" />
-            </div>
-            <n-space class="mt-16" justify="space-evenly">
-              <n-button dashed type="primary" @click="copy(item.url)">
-                url
-              </n-button>
-              <n-button dashed type="primary" @click="copy(`![${item.fileName}](${item.url})`)">
-                MD
-              </n-button>
-              <n-button
-                dashed
-                type="primary"
-                @click="copy(`&lt;img src=&quot;${item.url}&quot; /&gt;`)"
-              >
-                img
-              </n-button>
-            </n-space>
-          </n-card>
-          <div v-for="i in 4" :key="i" class="w-280" />
-        </n-space>
-      </n-image-group>
-    </n-card>
   </CommonPage>
 </template>
 
 <script setup>
-import { useClipboard } from '@vueuse/core'
 import qiniu from '@/api/qiniu'
 
-defineOptions({ name: 'ImgUpload' })
+defineOptions({ name: 'ImageUpload' })
 
-const { copy, copied } = useClipboard()
+defineProps({
+  // 上传数量限制
+  max: {
+    type: Number,
+    default: 6,
+  },
+})
 const actionUrl = import.meta.env.VITE_QINIU_UPLOAD // 上传地址
 const imgList = reactive([]) // 图片列表
+const accessList = '.png,.jpg,.jpeg'
 const uploadData = ref({ // 上传信息
   key: '',
   token: '',
-})
-
-watch(copied, (val) => {
-  val && $message.success('已复制到剪切板')
 })
 
 async function onBeforeUpload({ file }) {
@@ -87,7 +64,6 @@ async function onBeforeUpload({ file }) {
 
 function handleFinish({ file, event }) {
   if (event && event.target && event.target.status === 200) {
-    // 假设服务器返回的是 JSON 格式，包含文件的 URL
     const response = JSON.parse(event.target.responseText)
     const fileUrl = response.url // 假设返回的 JSON 对象中有一个 url 字段
     $message.success('上传成功')

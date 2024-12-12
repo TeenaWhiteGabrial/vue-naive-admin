@@ -15,4 +15,5 @@ export default {
   // 验证菜单路径
   validateMenuPath: path =>
     request.get(`/permission/menu/validate?path=${path}`),
+  // getSiteInfo
 }
