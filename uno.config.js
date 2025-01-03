@@ -6,7 +6,7 @@
  * Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
  **********************************/
 
-import { defineConfig, presetAttributify, presetIcons, presetUno } from 'unocss'
+import { defineConfig, presetAttributify, presetIcons, presetUno, presetWebFonts } from 'unocss'
 import presetRemToPx from '@unocss/preset-rem-to-px'
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
 import { getIcons } from './build'
@@ -28,6 +28,13 @@ export default defineConfig({
       },
     }),
     presetRemToPx({ baseFontSize: 4 }),
+    presetWebFonts({
+      fonts: {
+        sans: 'Bungee Spice',
+        serif: 'Bungee Spice',
+        mono: 'Bungee Spice',
+      },
+    }),
   ],
   safelist: icons.map(icon => `${icon} ${icon}?mask`.split(' ')).flat(),
   shortcuts: [

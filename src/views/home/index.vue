@@ -11,30 +11,29 @@
           />
           <div class="ml-20 flex-col">
             <span class="text-20 opacity-80">
-              Hello, {{ userStore.displayName ?? userStore.userName }}
+              {{ greetWords }}
             </span>
-            <!-- <span class="mt-4 opacity-50">当前角色：{{ userStore.currentRole?.name }}</span> -->
+            <span class="mt-2 text-14 opacity-80">
+              日期：{{ currentTime.date }} - {{ currentTime.week }}
+            </span>
           </div>
         </div>
-
-        <p class="mt-28 text-14 opacity-60">
-          一个人几乎可以在任何他怀有无限热忱的事情上成功。
-        </p>
-        <p class="mt-12 text-right text-12 opacity-40">
-          —— 查尔斯·史考伯
-        </p>
+        <n-clock />
       </n-card>
-      <n-card class="ml-12 w-70%" title="✨ 欢迎使用 Vue Naive Admin 2.0">
-        <template #header-extra>
-          <a
-            class="text-14 text-primary text-highlight hover:underline hover:opacity-80"
-            href="https://isme.top"
-            target="_blank"
-            @click.prevent="message?.info('官网正在火速开发中...')"
-          >
-            isme.top
-          </a>
-        </template>
+      <n-card class="ml-12 w-70%">
+        <div class="flex items-center">
+          <n-avatar
+            round
+            :size="60"
+            :src="userStore.avatar"
+            class="flex-shrink-0"
+          />
+          <div class="ml-20 flex-col">
+            <span class="text-20 opacity-80">
+              {{ greetWords }}
+            </span>
+          </div>
+        </div>
 
         <p class="opacity-60">
           这是一款极简风格的后台管理模板，包含前后端解决方案，前端使用 Vite +
@@ -167,7 +166,9 @@ import { BarChart, LineChart, PieChart } from 'echarts/charts'
 import { UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
 import VChart from 'vue-echarts'
+import nClock from './components/clock.vue'
 import { useUserStore } from '@/store'
+import { useTime } from '@/composables'
 
 const userStore = useUserStore()
 
@@ -299,5 +300,23 @@ const skillOption = {
   ],
 }
 
-const message = $message
+const currentTime = reactive({
+  week: '0', // 星期
+  time: '00:00:00', // 具体时间
+  phase: '上午', // 早上、上午、中午、下午、晚上
+  date: '2025/01/02', // 日期
+})
+
+const { getCurrentTime, getDate, getPhase, getWeek } = useTime()
+const greetWords = `欢迎登录，${userStore.displayName ?? userStore.userName}总监`
+function updateCurrentTime() {
+  currentTime.week = getWeek()
+  currentTime.time = getCurrentTime()
+  currentTime.phase = getPhase()
+  currentTime.date = getDate()
+}
+
+onMounted(() => {
+  setInterval(updateCurrentTime, 1000)
+})
 </script>
