@@ -26,6 +26,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      lunisolar:
+        specifier: ^2.5.1
+        version: 2.5.1
       naive-ui:
         specifier: ^2.40.3
         version: 2.40.3(vue@3.4.30(typescript@5.5.2))
@@ -2063,6 +2066,9 @@ packages:
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
+
+  lunisolar@2.5.1:
+    resolution: {integrity: sha512-JHUy/q/SbeC2CGb7yJMk/SrnuH6CBepzWS5rndfL/sRp1VGzA3JSSOSr/EZ7MBEPV/q6mDibwxcg06k4CSDbvw==}
 
   magic-string@0.30.10:
     resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}
@@ -5081,6 +5087,8 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
+
+  lunisolar@2.5.1: {}
 
   magic-string@0.30.10:
     dependencies:

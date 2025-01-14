@@ -2,70 +2,16 @@
   <AppPage show-footer>
     <div class="flex">
       <n-card class="min-w-200 w-30%">
-        <div class="flex items-center">
-          <n-avatar
-            round
-            :size="60"
-            :src="userStore.avatar"
-            class="flex-shrink-0"
-          />
-          <div class="ml-20 flex-col">
-            <span class="text-20 opacity-80">
-              {{ greetWords }}
-            </span>
-            <span class="mt-2 text-14 opacity-80">
-              日期：{{ currentTime.date }} - {{ currentTime.week }}
-            </span>
-          </div>
-        </div>
-        <n-clock />
+        <n-time />
       </n-card>
       <n-card class="ml-12 w-70%">
-        <div class="flex items-center">
-          <n-avatar
-            round
-            :size="60"
-            :src="userStore.avatar"
-            class="flex-shrink-0"
-          />
-          <div class="ml-20 flex-col">
-            <span class="text-20 opacity-80">
-              {{ greetWords }}
-            </span>
-          </div>
-        </div>
-
-        <p class="opacity-60">
-          这是一款极简风格的后台管理模板，包含前后端解决方案，前端使用 Vite +
-          Vue3 + Pinia + Unocss，后端使用 Nestjs + TypeOrm +
-          MySql，简单易用，赏心悦目，历经十几次重构和细节打磨，诚意满满！！
-        </p>
-        <footer class="mt-12 flex items-center justify-end">
-          <n-button
-            type="primary"
-            ghost
-            tag="a"
-            href="https://docs.isme.top/web/#/624306705/188522224"
-            target="__blank"
-          >
-            开发文档
-          </n-button>
-          <n-button
-            type="primary"
-            class="ml-12"
-            tag="a"
-            href="https://github.com/zclzone/vue-naive-admin/tree/2.x"
-            target="__blank"
-          >
-            代码仓库
-          </n-button>
-        </footer>
+        <n-user />
       </n-card>
     </div>
     <div class="mt-12 flex">
-      <n-card class="w-50%" title="💯 特性" segmented>
+      <n-card class="w-50%" title="📝 待办清单" segmented>
         <template #header-extra>
-          <span class="opacity-90 text-highlight">👏 历经十几次重构和细节打磨</span>
+          <span class="font-bold opacity-90 text-highlight">🚧 努力施工中......</span>
         </template>
 
         <ul class="opacity-90">
@@ -166,11 +112,8 @@ import { BarChart, LineChart, PieChart } from 'echarts/charts'
 import { UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
 import VChart from 'vue-echarts'
-import nClock from './components/clock.vue'
-import { useUserStore } from '@/store'
-import { useTime } from '@/composables'
-
-const userStore = useUserStore()
+import nTime from './components/time.vue'
+import nUser from './components/user.vue'
 
 echarts.use([
   TooltipComponent,
@@ -299,24 +242,4 @@ const skillOption = {
     },
   ],
 }
-
-const currentTime = reactive({
-  week: '0', // 星期
-  time: '00:00:00', // 具体时间
-  phase: '上午', // 早上、上午、中午、下午、晚上
-  date: '2025/01/02', // 日期
-})
-
-const { getCurrentTime, getDate, getPhase, getWeek } = useTime()
-const greetWords = `欢迎登录，${userStore.displayName ?? userStore.userName}总监`
-function updateCurrentTime() {
-  currentTime.week = getWeek()
-  currentTime.time = getCurrentTime()
-  currentTime.phase = getPhase()
-  currentTime.date = getDate()
-}
-
-onMounted(() => {
-  setInterval(updateCurrentTime, 1000)
-})
 </script>

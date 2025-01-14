@@ -5,7 +5,7 @@
         <n-avatar round :size="100" :src="userStore.avatar" />
         <div class="ml-20">
           <div class="flex items-center text-16">
-            <span>用户名:</span>
+            <span>账号:</span>
             <span class="ml-12 opacity-80">{{ userStore.userName }}</span>
             <n-button
               class="ml-32"
@@ -21,9 +21,6 @@
             <n-button type="primary" ghost @click="avatarModalRef.open()">
               更改头像
             </n-button>
-            <span class="ml-12 opacity-60">
-              修改头像只支持在线链接，不提供上传图片功能，如有需要可自行对接！
-            </span>
           </div>
         </div>
       </n-space>
@@ -169,7 +166,7 @@
 <script setup>
 import api from '@/api/user'
 import { MeModal, UploadImage } from '@/components'
-import { useForm, useModal } from '@/composables'
+import { useConfig, useForm, useModal } from '@/composables'
 import { useUserStore } from '@/store'
 import { getUserInfo } from '@/store/helper'
 
@@ -216,11 +213,8 @@ function uploadSuccess(fileUrl) {
   newAvatar.value = fileUrl[0].url
 }
 
-const genders = [
-  { label: '男', value: 'male' },
-  { label: '女', value: 'female' },
-  { label: '保密', value: 'secret' },
-]
+const { genders } = useConfig()
+
 const [profileModalRef] = useModal()
 const [profileFormRef, profileForm, profileValidation] = useForm({
   userId: userStore.userId,
@@ -228,6 +222,8 @@ const [profileFormRef, profileForm, profileValidation] = useForm({
   gender: userStore.userInfo?.gender ?? '',
   department: userStore.userInfo?.department,
   email: userStore.userInfo?.email,
+  identity: userStore.userInfo?.identity,
+  description: userStore.userInfo?.description,
 })
 async function handleProfileSave() {
   await profileValidation()

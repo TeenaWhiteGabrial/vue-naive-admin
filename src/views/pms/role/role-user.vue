@@ -87,6 +87,8 @@ import api from './api'
 import { MeCrud, MeQueryItem } from '@/components'
 import { formatDateTime } from '@/utils'
 
+import { useConfig } from '@/composables'
+
 defineOptions({ name: 'RoleUser' })
 const route = useRoute()
 
@@ -98,11 +100,7 @@ onMounted(() => {
   $table.value?.handleSearch()
 })
 
-const genders = [
-  { label: '男', value: 'male' },
-  { label: '女', value: 'female' },
-  { label: '保密', value: 'secret' },
-]
+const { genders } = useConfig()
 
 const columns = [
   { type: 'selection', fixed: 'left' },

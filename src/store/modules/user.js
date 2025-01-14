@@ -23,8 +23,17 @@ export const useUserStore = defineStore('user', {
     currentRole() {
       return this.userInfo?.currentRole || {}
     },
+    identity() {
+      return this.userInfo?.identity
+    },
+    gender() {
+      return this.userInfo?.gender
+    },
     roles() {
       return this.userInfo?.roles || []
+    },
+    description() {
+      return this.userInfo?.description
     },
   },
   actions: {
