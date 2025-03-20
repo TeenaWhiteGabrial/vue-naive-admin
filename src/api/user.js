@@ -1,11 +1,11 @@
 import { request } from '@/utils'
 
 export default {
-  create: data => request.post('/user/add', data),
-  read: (params = {}) => request.post('/user/list', { params }),
-  update: data => request.post(`/user/update/${data.userId}`, data),
-  delete: id => request.post(`/user/delete/${id}`),
-  resetPwd: data => request.post(`/user/resetPassword`, data),
+  create: data => request.post('/spc/user/add', data),
+  read: (params = {}) => request.post('/spc/user/list', { params }),
+  update: data => request.post(`/spc/user/update/${data.userId}`, data),
+  delete: id => request.post(`/spc/user/delete/${id}`),
+  resetPwd: data => request.post(`/spc/user/resetPassword`, data),
 
-  getAllRoles: data => request.post('/role/list', data),
+  getAllRoles: data => request.post('/spc/role/list', data),
 }

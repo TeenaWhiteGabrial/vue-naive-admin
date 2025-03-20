@@ -45,67 +45,7 @@ export default defineConfig(({ mode }) => {
       port: 3200,
       open: true,
       proxy: {
-        '/user': {
-          target: VITE_PROXY_TARGET,
-          changeOrigin: true,
-          secure: false,
-          configure: (proxy, options) => {
-            // 配置此项可在响应头中看到请求的真实地址
-            proxy.on('proxyRes', (proxyRes, req) => {
-              proxyRes.headers['x-real-url']
-                = new URL(req.url || '', options.target)?.href || ''
-            })
-          },
-        },
-        '/role': {
-          target: VITE_PROXY_TARGET,
-          changeOrigin: true,
-          secure: false,
-          configure: (proxy, options) => {
-            // 配置此项可在响应头中看到请求的真实地址
-            proxy.on('proxyRes', (proxyRes, req) => {
-              proxyRes.headers['x-real-url']
-                = new URL(req.url || '', options.target)?.href || ''
-            })
-          },
-        },
-        '/auth': {
-          target: VITE_PROXY_TARGET,
-          changeOrigin: true,
-          secure: false,
-          configure: (proxy, options) => {
-            // 配置此项可在响应头中看到请求的真实地址
-            proxy.on('proxyRes', (proxyRes, req) => {
-              proxyRes.headers['x-real-url']
-                = new URL(req.url || '', options.target)?.href || ''
-            })
-          },
-        },
-        '/permission': {
-          target: VITE_PROXY_TARGET,
-          changeOrigin: true,
-          secure: false,
-          configure: (proxy, options) => {
-            // 配置此项可在响应头中看到请求的真实地址
-            proxy.on('proxyRes', (proxyRes, req) => {
-              proxyRes.headers['x-real-url']
-                = new URL(req.url || '', options.target)?.href || ''
-            })
-          },
-        },
-        '/holiday': {
-          target: VITE_PROXY_TARGET,
-          changeOrigin: true,
-          secure: false,
-          configure: (proxy, options) => {
-            // 配置此项可在响应头中看到请求的真实地址
-            proxy.on('proxyRes', (proxyRes, req) => {
-              proxyRes.headers['x-real-url']
-                = new URL(req.url || '', options.target)?.href || ''
-            })
-          },
-        },
-        '/ai': {
+        '/spc': {
           target: VITE_PROXY_TARGET,
           changeOrigin: true,
           secure: false,
