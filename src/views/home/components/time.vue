@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex items-center">
-      <div class="ml-20 flex-col">
+      <div class="mx-auto flex-col">
         <span class="clock-class text-14 opacity-80">
           {{ currentTime.time }}
         </span>
@@ -35,7 +35,19 @@ const { getCurrentTime, getDate, getWeek, getLunarDate, getNextHoliday } = useTi
 const holidayInfo = ref('只想好好的摆烂~~~')
 getNextHoliday()
   .then((res) => {
-    holidayInfo.value = res
+    const { holiday, days } = res
+    if (days === 0) {
+      holidayInfo.value = `今天是【${holiday}】假期,假期愉快~`
+    }
+    else if (days === 1) {
+      holidayInfo.value = `加油！明天就是【${holiday}】了！`
+    }
+    else if (days === 2) {
+      holidayInfo.value = `再坚持一下！后天就是【${holiday}】了！`
+    }
+    else {
+      holidayInfo.value = `【${holiday}】假期倒计时：${days}天`
+    }
   })
 
 function updateCurrentTime() {
