@@ -1,7 +1,7 @@
 <template>
   <footer class="f-c-c text-14 text-gray-500">
     <p>
-      Copyright © 2024
+      Copyright © 2025
       <a
         href="https://github.com/zclzone"
         target="__blank"
