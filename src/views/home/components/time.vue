@@ -2,9 +2,13 @@
   <div>
     <div class="flex items-center">
       <div class="mx-auto flex-col">
-        <span class="clock-class text-14 opacity-80">
-          {{ currentTime.time }}
-        </span>
+        <div class="clock-container">
+          <span class="clock-hour">{{ currentTime.hours }}</span>
+          <span class="clock-separator">:</span>
+          <span class="clock-minute">{{ currentTime.minutes }}</span>
+          <span class="clock-separator">:</span>
+          <span class="clock-second">{{ currentTime.seconds }}</span>
+        </div>
         <span class="text-16 font-bold opacity-80">
           {{ currentTime.date }}-{{ currentTime.week }}
         </span>
@@ -24,13 +28,15 @@
 import { useTime } from '@/composables'
 
 const currentTime = reactive({
+  hours: '', // 小时
+  minutes: '', // 分钟
+  seconds: '', // 秒
   week: '', // 星期
-  time: '', // 具体时间
   date: '', // 公历日期
   chineseCalendarDate: '', // 农历日期
 })
 
-const { getCurrentTime, getDate, getWeek, getLunarDate, getNextHoliday } = useTime()
+const { getDate, getWeek, getLunarDate, getNextHoliday } = useTime()
 
 const holidayInfo = ref('只想好好的摆烂~~~')
 getNextHoliday()
@@ -51,8 +57,11 @@ getNextHoliday()
   })
 
 function updateCurrentTime() {
+  const now = new Date()
+  currentTime.hours = String(now.getHours()).padStart(2, '0')
+  currentTime.minutes = String(now.getMinutes()).padStart(2, '0')
+  currentTime.seconds = String(now.getSeconds()).padStart(2, '0')
   currentTime.week = getWeek()
-  currentTime.time = getCurrentTime()
   currentTime.date = getDate()
   currentTime.chineseCalendarDate = getLunarDate()
 }
@@ -63,12 +72,34 @@ onMounted(() => {
 </script>
 
 <style lang="css" scoped>
-  .clock-class {
-    font-family: "Bungee Spice", sans-serif;
+  .clock-container {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+  }
+
+  .clock-hour,
+  .clock-minute,
+  .clock-second {
+    font-family: "Bungee Spice", monospace;
     color: transparent;
     background-clip: text;
     -webkit-background-clip: text;
     background-image: linear-gradient(45deg, #4a69bd, #96c93d);
     font-size: 3em;
+    width: 70px;
+    /* 固定宽度 */
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .clock-separator {
+    font-family: "Bungee Spice", monospace;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-image: linear-gradient(45deg, #4a69bd, #96c93d);
+    font-size: 3em;
+    padding: 0 5px;
   }
 </style>

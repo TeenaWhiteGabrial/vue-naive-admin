@@ -1,36 +1,119 @@
 <template>
-  <n-card class="w-50%" title="📝 待办清单" segmented>
+  <n-card class="w-full" title="📝 待办清单" segmented>
     <template #header-extra>
-      <span class="cursor-pointer font-bold opacity-90 text-highlight" @click="showModal('add')">🆕️ 添加</span>
+      <div class="flex items-center gap-4">
+        <n-button size="small" @click="toggleViewMode">
+          <template #icon>
+            <n-icon>
+              <Grid v-if="viewMode === 'single'" />
+              <List v-else />
+            </n-icon>
+          </template>
+        </n-button>
+        <n-button size="small" @click="showModal('add')">
+          <template #icon>
+            <n-icon>
+              <AddCircle />
+            </n-icon>
+          </template>
+        </n-button>
+      </div>
     </template>
 
     <n-spin :show="loading">
-      <ul class="opacity-90">
-        <li v-for="(task, index) in taskList" :key="index" class="flex items-center justify-between py-5 transition-all-300">
-          <span class="font-medium opacity-90 transition-opacity-300 hover:opacity-80">{{ task.content }}</span>
-          <div class="flex items-center gap-2">
-            <n-tag
-              :color="getStatusColor(task.state)"
-              size="small"
-              round
-              class="cursor-pointer transition-transform-300 hover:scale-110"
-              @click="handleStatusClick(task, index)"
+      <template v-if="viewMode === 'single'">
+        <ul class="opacity-90">
+          <li v-for="(task, index) in taskList" :key="index" class="flex items-center justify-between py-5 transition-all-300">
+            <span
+              class="font-medium opacity-90 transition-opacity-300 hover:opacity-80"
+              :class="{
+                'text-work': task.type === '0',
+                'text-life': task.type === '1',
+                'text-star': task.type === '2',
+              }"
             >
-              {{ getStatusText(task.state) }}
-            </n-tag>
-            <n-button
-              size="tiny"
-              type="primary"
-              class="ml-2"
-              @click="showModal('edit', task, index)"
-            >
-              编辑
-            </n-button>
+              {{ task.content }}
+            </span>
+            <div class="flex items-center gap-2">
+              <n-tag
+                :color="getStatusColor(task.state)"
+                size="small"
+                round
+                class="cursor-pointer transition-transform-300 hover:scale-110"
+                @click="handleStatusClick(task, index)"
+              >
+                {{ getStatusText(task.state) }}
+              </n-tag>
+              <n-button
+                size="tiny"
+                type="primary"
+                class="ml-2"
+                @click="showModal('edit', task, index)"
+              >
+                编辑
+              </n-button>
+            </div>
+          </li>
+        </ul>
+      </template>
+      <template v-else>
+        <div class="grid grid-cols-3 gap-12">
+          <div v-for="type in taskTypes" :key="type.value" class="opacity-90">
+            <h3 class="mb-4 text-center font-bold" :class="getTypeClass(type.value)">
+              {{ type.label }}
+            </h3>
+            <ul class="space-y-3">
+              <li v-for="(task, index) in filteredTasks(type.value)" :key="index">
+                <n-card size="small" class="cursor-pointer transition-all-300 hover:shadow-md">
+                  <div class="flex items-center justify-between">
+                    <span
+                      class="font-medium opacity-90 transition-opacity-300 hover:opacity-80" :class="{
+                        'text-work': task.type === '0',
+                        'text-life': task.type === '1',
+                        'text-star': task.type === '2',
+                      }"
+                    >
+                      {{ task.content }}
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <n-tag
+                        :color="getStatusColor(task.state)"
+                        size="small"
+                        round
+                        class="cursor-pointer transition-transform-300 hover:scale-110"
+                        @click="handleStatusClick(task, index)"
+                      >
+                        {{ getStatusText(task.state) }}
+                      </n-tag>
+                      <n-button
+                        size="tiny"
+                        type="primary"
+                        class="ml-2"
+                        @click="showModal('edit', task, index)"
+                      >
+                        编辑
+                      </n-button>
+                    </div>
+                  </div>
+                  <div v-if="task.notes" class="mt-2 text-12 text-gray-500">
+                    <div
+                      v-for="(note, noteIndex) in task.notes.split('\n')"
+                      :key="noteIndex"
+                      class="flex items-start"
+                    >
+                      <span class="mr-4">•</span>
+                      <span>{{ note }}</span>
+                    </div>
+                  </div>
+                </n-card>
+              </li>
+            </ul>
           </div>
-        </li>
-      </ul>
+        </div>
+      </template>
     </n-spin>
   </n-card>
+
   <n-modal v-model:show="showFormModal" preset="card" :title="modalTitle" style="width: 600px">
     <n-form
       ref="formRef"
@@ -45,7 +128,7 @@
           :options="[
             { label: 'WORK', value: '0' },
             { label: 'LIFE', value: '1' },
-            { label: '计划中...', value: '2' },
+            { label: 'OTHER', value: '2' },
           ]"
         />
       </n-form-item>
@@ -82,16 +165,25 @@
 
 <script setup>
 import dayjs from 'dayjs'
+import { onMounted, ref } from 'vue'
+import { AddCircle, Grid, List } from '@vicons/ionicons5'
 import taskApi from '@/api/task'
 
 const loading = ref(false)
 const taskList = ref([])
+const viewMode = ref('single') // 'single' 或 'grouped'
+
+const taskTypes = [
+  { label: 'WORK', value: '0' },
+  { label: 'LIFE', value: '1' },
+  { label: 'STAR', value: '2' },
+]
 
 onMounted(async () => {
   try {
     loading.value = true
     const res = await taskApi.getList({
-      state: ['0', '1'], // 0 未开始 1 进行中 2 已完成
+      state: ['0', '1', '2'], // 0 未开始 1 进行中 2 已完成
     })
     if (res.code === 0) {
       taskList.value = res.data || []
@@ -102,15 +194,31 @@ onMounted(async () => {
   }
 })
 
+function toggleViewMode() {
+  viewMode.value = viewMode.value === 'single' ? 'grouped' : 'single'
+}
+
+function filteredTasks(type) {
+  return taskList.value.filter(task => task.type === type)
+}
+
+function getTypeClass(type) {
+  return {
+    0: 'text-work',
+    1: 'text-life',
+    2: 'text-star',
+  }[type]
+}
+
 function getStatusColor(status) {
   const statusColors = {
     0: '#52c41a', // 未开始-警示红
     1: '#fa8c16', // 进行中-过渡橙
-    2: '#52c41a', // 已完成-确认绿
+    2: '#333', // 已完成-确认绿
   }
   return {
     color: statusColors[status],
-    textColor: status === 1 ? '#fff' : '#fff', // 橙色背景配白字，其他深色背景配白字
+    textColor: status === 1 ? '#fff' : '#fff',
     borderColor: 'transparent',
   } || {}
 }
@@ -146,7 +254,7 @@ const showFormModal = ref(false)
 const modalTitle = ref('')
 const formRef = ref(null)
 const formData = ref({
-  type: 0,
+  type: '0',
   deadLine: null,
   content: '',
   notes: '',
@@ -162,6 +270,10 @@ const formRules = {
     required: true,
     message: '请选择截止时间',
     trigger: ['blur', 'change'],
+    validator: (rule, value) => {
+      // 修改校验逻辑，兼容时间戳格式
+      return !!value || value === 0
+    },
   },
   content: {
     required: true,
@@ -179,7 +291,7 @@ function showModal(action, task) {
     }
   }
   else {
-    formData.value = { type: 0, deadLine: null, content: '', notes: '' }
+    formData.value = { type: '0', deadLine: null, content: '', notes: '' }
   }
   showFormModal.value = true
 }
@@ -209,7 +321,7 @@ async function handleSubmit() {
 
 async function refreshTaskList() {
   try {
-    const res = await taskApi.getList({ state: ['0', '1'] })
+    const res = await taskApi.getList({ state: ['0', '1', '2'] })
     if (res.code === 0)
       taskList.value = res.data || []
   }
@@ -218,3 +330,17 @@ async function refreshTaskList() {
   }
 }
 </script>
+
+<style scoped>
+  .text-work {
+    color: #1890ff;
+  }
+
+  .text-life {
+    color: #52c41a;
+  }
+
+  .text-star {
+    color: #722ed1;
+  }
+</style>
