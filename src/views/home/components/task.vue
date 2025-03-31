@@ -2,14 +2,6 @@
   <n-card class="w-full" title="📝 待办清单" segmented>
     <template #header-extra>
       <div class="flex items-center gap-4">
-        <n-button size="small" @click="toggleViewMode">
-          <template #icon>
-            <n-icon>
-              <Grid v-if="viewMode === 'single'" />
-              <List v-else />
-            </n-icon>
-          </template>
-        </n-button>
         <n-button size="small" @click="showModal('add')">
           <template #icon>
             <n-icon>
@@ -21,96 +13,59 @@
     </template>
 
     <n-spin :show="loading">
-      <template v-if="viewMode === 'single'">
-        <ul class="opacity-90">
-          <li v-for="(task, index) in taskList" :key="index" class="flex items-center justify-between py-5 transition-all-300">
-            <span
-              class="font-medium opacity-90 transition-opacity-300 hover:opacity-80"
-              :class="{
-                'text-work': task.type === '0',
-                'text-life': task.type === '1',
-                'text-star': task.type === '2',
-              }"
-            >
-              {{ task.content }}
-            </span>
-            <div class="flex items-center gap-2">
-              <n-tag
-                :color="getStatusColor(task.state)"
-                size="small"
-                round
-                class="cursor-pointer transition-transform-300 hover:scale-110"
-                @click="handleStatusClick(task, index)"
-              >
-                {{ getStatusText(task.state) }}
-              </n-tag>
-              <n-button
-                size="tiny"
-                type="primary"
-                class="ml-2"
-                @click="showModal('edit', task, index)"
-              >
-                编辑
-              </n-button>
-            </div>
-          </li>
-        </ul>
-      </template>
-      <template v-else>
-        <div class="grid grid-cols-3 gap-12">
-          <div v-for="type in taskTypes" :key="type.value" class="opacity-90">
-            <h3 class="mb-4 text-center font-bold" :class="getTypeClass(type.value)">
-              {{ type.label }}
-            </h3>
-            <ul class="space-y-3">
-              <li v-for="(task, index) in filteredTasks(type.value)" :key="index">
-                <n-card size="small" class="cursor-pointer transition-all-300 hover:shadow-md">
-                  <div class="flex items-center justify-between">
-                    <span
-                      class="font-medium opacity-90 transition-opacity-300 hover:opacity-80" :class="{
-                        'text-work': task.type === '0',
-                        'text-life': task.type === '1',
-                        'text-star': task.type === '2',
-                      }"
+      <div class="grid grid-cols-3 gap-12">
+        <div v-for="type in taskTypes" :key="type.value" class="opacity-90">
+          <h3 class="mb-4 text-center font-bold" :class="getTypeClass(type.value)">
+            {{ type.label }}
+          </h3>
+          <ul class="space-y-3">
+            <li v-for="(task, index) in filteredTasks(type.value)" :key="index">
+              <n-card size="small" class="cursor-pointer transition-all-300 hover:shadow-md">
+                <div class="flex items-center justify-between">
+                  <span
+                    class="font-medium opacity-90 transition-opacity-300 hover:opacity-80" :class="{
+                      'text-work': task.type === '0',
+                      'text-life': task.type === '1',
+                      'text-star': task.type === '2',
+                    }"
+                  >
+                    {{ task.content }}
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <n-tag
+                      :color="getStatusColor(task.state)"
+                      size="small"
+                      round
+                      class="cursor-pointer transition-transform-300 hover:scale-110"
+                      @click="handleStatusClick(task, index)"
                     >
-                      {{ task.content }}
-                    </span>
-                    <div class="flex items-center gap-2">
-                      <n-tag
-                        :color="getStatusColor(task.state)"
-                        size="small"
-                        round
-                        class="cursor-pointer transition-transform-300 hover:scale-110"
-                        @click="handleStatusClick(task, index)"
-                      >
-                        {{ getStatusText(task.state) }}
-                      </n-tag>
-                      <n-button
-                        size="tiny"
-                        type="primary"
-                        class="ml-2"
-                        @click="showModal('edit', task, index)"
-                      >
-                        编辑
-                      </n-button>
-                    </div>
-                  </div>
-                  <div v-if="task.notes" class="mt-2 text-12 text-gray-500">
-                    <div
-                      v-for="(note, noteIndex) in task.notes.split('\n')"
-                      :key="noteIndex"
-                      class="flex items-start"
+                      {{ getStatusText(task.state) }}
+                    </n-tag>
+                    <n-button
+                      size="tiny"
+                      type="primary"
+                      class="ml-2"
+                      @click="showModal('edit', task, index)"
                     >
-                      <span class="mr-4">•</span>
-                      <span>{{ note }}</span>
-                    </div>
+                      编辑
+                    </n-button>
                   </div>
-                </n-card>
-              </li>
-            </ul>
-          </div>
+                </div>
+                <div v-if="task.notes" class="mt-2 text-12 text-gray-500">
+                  <div
+                    v-for="(note, noteIndex) in task.notes.split('\n')"
+                    :key="noteIndex"
+                    class="flex items-start"
+                  >
+                    <span class="mr-4">•</span>
+                    <span>{{ note }}</span>
+                  </div>
+                </div>
+              </n-card>
+            </li>
+          </ul>
         </div>
-      </template>
+      </div>
     </n-spin>
   </n-card>
 
@@ -171,7 +126,6 @@ import taskApi from '@/api/task'
 
 const loading = ref(false)
 const taskList = ref([])
-const viewMode = ref('single') // 'single' 或 'grouped'
 
 const taskTypes = [
   { label: 'WORK', value: '0' },
@@ -193,10 +147,6 @@ onMounted(async () => {
     loading.value = false
   }
 })
-
-function toggleViewMode() {
-  viewMode.value = viewMode.value === 'single' ? 'grouped' : 'single'
-}
 
 function filteredTasks(type) {
   return taskList.value.filter(task => task.type === type)
