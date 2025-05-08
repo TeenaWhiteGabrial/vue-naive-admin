@@ -1,14 +1,48 @@
 <template>
-  <n-card class="w-full" title="📝 待办清单" segmented>
+  <n-card class="w-full" segmented>
+    <template #header>
+      <div flex gap-16>
+        <div>📝 待办清单</div>
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <n-button size="small" @click="refreshTaskList(['0', '1'])">
+              <template #icon>
+                <n-icon>
+                  <Refresh />
+                </n-icon>
+              </template>
+            </n-button>
+          </template>
+          刷新待办
+        </n-tooltip>
+      </div>
+    </template>
     <template #header-extra>
       <div class="flex items-center gap-4">
-        <n-button size="small" @click="showModal('add')">
-          <template #icon>
-            <n-icon>
-              <AddCircle />
-            </n-icon>
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <n-button size="small" @click="showModal('add')">
+              <template #icon>
+                <n-icon>
+                  <AddCircle />
+                </n-icon>
+              </template>
+            </n-button>
           </template>
-        </n-button>
+          新建任务
+        </n-tooltip>
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <n-button size="small" @click="refreshTaskList(['2'])">
+              <template #icon>
+                <n-icon>
+                  <Recording />
+                </n-icon>
+              </template>
+            </n-button>
+          </template>
+          已完成
+        </n-tooltip>
       </div>
     </template>
 
@@ -20,10 +54,10 @@
           </h3>
           <ul class="space-y-3">
             <li v-for="(task, index) in filteredTasks(type.value)" :key="index">
-              <n-card size="small" class="cursor-pointer transition-all-300 hover:shadow-md">
+              <n-card size="small" class="task-card cursor-pointer transition-all-300 hover:shadow-md">
                 <div class="flex items-center justify-between">
                   <span
-                    class="font-medium opacity-90 transition-opacity-300 hover:opacity-80" :class="{
+                    class="task-title font-medium opacity-90 transition-opacity-300 hover:opacity-80" :class="{
                       'text-work': task.type === '0',
                       'text-life': task.type === '1',
                       'text-star': task.type === '2',
@@ -51,14 +85,20 @@
                     </n-button>
                   </div>
                 </div>
-                <div v-if="task.notes" class="mt-2 text-12 text-gray-500">
+                <div v-if="task.deadLine" class="deadline-container">
+                  <n-icon size="14" class="deadline-icon">
+                    <TimerOutline />
+                  </n-icon>
+                  <span class="deadline-text">{{ formatDeadline(task.deadLine) }}</span>
+                </div>
+                <div v-if="task.notes" class="notes-container">
                   <div
                     v-for="(note, noteIndex) in task.notes.split('\n')"
                     :key="noteIndex"
-                    class="flex items-start"
+                    class="note-item"
                   >
-                    <span class="mr-4">•</span>
-                    <span>{{ note }}</span>
+                    <span class="note-bullet">•</span>
+                    <span class="note-content">{{ note }}</span>
                   </div>
                 </div>
               </n-card>
@@ -88,7 +128,7 @@
         />
       </n-form-item>
       <n-form-item label="截止时间" path="deadLine">
-        <n-date-picker v-model:value="formData.deadLine" type="datetime" clearable />
+        <n-date-picker v-model:value="formData.deadLine" type="date" clearable />
       </n-form-item>
       <n-form-item label="任务内容" path="content">
         <n-input
@@ -121,7 +161,7 @@
 <script setup>
 import dayjs from 'dayjs'
 import { onMounted, ref } from 'vue'
-import { AddCircle, Grid, List } from '@vicons/ionicons5'
+import { AddCircle, Recording, Refresh, TimerOutline } from '@vicons/ionicons5'
 import taskApi from '@/api/task'
 
 const loading = ref(false)
@@ -182,6 +222,12 @@ function getStatusText(status) {
   return statusMap[status] || '未知'
 }
 
+function formatDeadline(deadline) {
+  if (!deadline)
+    return ''
+  return dayjs(deadline).format('YYYY-MM-DD')
+}
+
 async function handleStatusClick(task, index) {
   try {
     const newState = (Number.parseInt(task.state) + 1) % 3
@@ -193,6 +239,7 @@ async function handleStatusClick(task, index) {
     if (res.code === 0) {
       taskList.value[index].state = newState.toString()
       window.$message?.success('状态更新成功')
+      refreshTaskList()
     }
   }
   catch (error) {
@@ -252,6 +299,7 @@ async function handleSubmit() {
     const payload = {
       ...formData.value,
       deadLine: formData.value.deadLine ? dayjs(formData.value.deadLine).format('YYYY-MM-DD HH:mm') : null,
+      state: '0',
     }
 
     const res = modalTitle.value === '新建任务'
@@ -269,9 +317,9 @@ async function handleSubmit() {
   }
 }
 
-async function refreshTaskList() {
+async function refreshTaskList(state = ['0', '1', '2']) {
   try {
-    const res = await taskApi.getList({ state: ['0', '1', '2'] })
+    const res = await taskApi.getList({ state })
     if (res.code === 0)
       taskList.value = res.data || []
   }
@@ -292,5 +340,70 @@ async function refreshTaskList() {
 
   .text-star {
     color: #722ed1;
+  }
+
+  .task-card {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .task-title {
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .deadline-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .deadline-icon {
+    margin-right: 6px;
+    color: #faad14;
+  }
+
+  .deadline-text {
+    color: #666;
+    font-weight: 500;
+  }
+
+  .deadline-text::before {
+    content: '截止时间: ';
+    color: #999;
+    font-weight: normal;
+  }
+
+  .notes-container {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.06);
+  }
+
+  .note-item {
+    display: flex;
+    align-items: flex-start;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 2px;
+  }
+
+  .note-bullet {
+    margin-right: 8px;
+    color: #aaa;
+  }
+
+  .note-content {
+    line-height: 1.5;
   }
 </style>
