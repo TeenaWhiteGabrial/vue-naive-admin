@@ -41,7 +41,7 @@
               </template>
             </n-button>
           </template>
-          已完成
+          已完成的任务
         </n-tooltip>
       </div>
     </template>
@@ -85,12 +85,6 @@
                     </n-button>
                   </div>
                 </div>
-                <div v-if="task.deadLine" class="deadline-container">
-                  <n-icon size="14" class="deadline-icon">
-                    <TimerOutline />
-                  </n-icon>
-                  <span class="deadline-text">{{ formatDeadline(task.deadLine) }}</span>
-                </div>
                 <div v-if="task.notes" class="notes-container">
                   <div
                     v-for="(note, noteIndex) in task.notes.split('\n')"
@@ -99,6 +93,12 @@
                   >
                     <span class="note-bullet">•</span>
                     <span class="note-content">{{ note }}</span>
+                  </div>
+                  <div v-if="task.deadLine" class="deadline-container">
+                    <n-icon size="14" class="deadline-icon">
+                      <TimerOutline />
+                    </n-icon>
+                    <span class="deadline-text">{{ formatDeadline(task.deadLine) }}</span>
                   </div>
                 </div>
               </n-card>
@@ -176,12 +176,7 @@ const taskTypes = [
 onMounted(async () => {
   try {
     loading.value = true
-    const res = await taskApi.getList({
-      state: ['0', '1', '2'], // 0 未开始 1 进行中 2 已完成
-    })
-    if (res.code === 0) {
-      taskList.value = res.data || []
-    }
+    refreshTaskList(['0', '1'])
   }
   finally {
     loading.value = false
@@ -229,8 +224,11 @@ function formatDeadline(deadline) {
 }
 
 async function handleStatusClick(task, index) {
+  if (task.state === '2') {
+    return
+  }
   try {
-    const newState = (Number.parseInt(task.state) + 1) % 3
+    const newState = Number.parseInt(task.state) + 1 // (Number.parseInt(task.state) + 1) % 3
     const res = await taskApi.update({
       _id: task._id,
       state: newState.toString(),
@@ -239,7 +237,7 @@ async function handleStatusClick(task, index) {
     if (res.code === 0) {
       taskList.value[index].state = newState.toString()
       window.$message?.success('状态更新成功')
-      refreshTaskList()
+      refreshTaskList(['0', '1'])
     }
   }
   catch (error) {
@@ -309,7 +307,7 @@ async function handleSubmit() {
     if (res.code === 0) {
       window.$message?.success(`${modalTitle.value}成功`)
       showFormModal.value = false
-      await refreshTaskList()
+      await refreshTaskList(['0', '1'])
     }
   }
   catch (error) {
@@ -317,7 +315,7 @@ async function handleSubmit() {
   }
 }
 
-async function refreshTaskList(state = ['0', '1', '2']) {
+async function refreshTaskList(state = ['0', '1']) {
   try {
     const res = await taskApi.getList({ state })
     if (res.code === 0)
@@ -361,27 +359,29 @@ async function refreshTaskList(state = ['0', '1', '2']) {
   .deadline-container {
     display: flex;
     align-items: center;
-    margin-top: 10px;
-    padding: 4px 8px;
-    background-color: rgba(0, 0, 0, 0.02);
-    border-radius: 4px;
-    font-size: 12px;
+    margin-top: 16px;
+    padding: 6px 10px;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 6px;
+    font-size: 13px;
+    border-left: 3px solid #faad14;
   }
 
   .deadline-icon {
-    margin-right: 6px;
-    color: #faad14;
+    margin-right: 8px;
+    color: #fa8c16;
+    font-size: 16px;
   }
 
   .deadline-text {
-    color: #666;
-    font-weight: 500;
+    color: #333;
+    font-weight: 600;
   }
 
   .deadline-text::before {
     content: '截止时间: ';
-    color: #999;
-    font-weight: normal;
+    color: #fa8c16;
+    font-weight: 600;
   }
 
   .notes-container {
