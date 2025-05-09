@@ -94,11 +94,17 @@
                     <span class="note-bullet">•</span>
                     <span class="note-content">{{ note }}</span>
                   </div>
-                  <div v-if="task.deadLine" class="deadline-container">
-                    <n-icon size="14" class="deadline-icon">
-                      <TimerOutline />
-                    </n-icon>
-                    <span class="deadline-text">{{ formatDeadline(task.deadLine) }}</span>
+                  <div v-if="task.deadLine" class="deadline-container" mt-4 flex flex-wrap px-2.5 py-1.25>
+                    <div flex>
+                      <n-icon size="16" class="deadline-icon" mt-4>
+                        <TimerOutline />
+                      </n-icon>
+                      <span class="deadline-text">{{ formatDeadline(task.deadLine) }}</span>
+                    </div>
+
+                    <span v-if="getRemainingDays(task.deadLine) !== null" class="remaining-days">
+                      {{ getRemainingDays(task.deadLine) >= 0 ? `剩余${getRemainingDays(task.deadLine)}天` : `已超期${Math.abs(getRemainingDays(task.deadLine))}天` }}
+                    </span>
                   </div>
                 </div>
               </n-card>
@@ -174,14 +180,16 @@ const taskTypes = [
 ]
 
 onMounted(async () => {
-  try {
-    loading.value = true
-    refreshTaskList(['0', '1'])
-  }
-  finally {
-    loading.value = false
-  }
+  refreshTaskList(['0', '1'])
 })
+function getRemainingDays(deadline) {
+  if (!deadline)
+    return null
+  const today = dayjs()
+  const deadlineDate = dayjs(deadline)
+  const days = deadlineDate.diff(today, 'day')
+  return days
+}
 
 function filteredTasks(type) {
   return taskList.value.filter(task => task.type === type)
@@ -317,6 +325,7 @@ async function handleSubmit() {
 
 async function refreshTaskList(state = ['0', '1']) {
   try {
+    loading.value = true
     const res = await taskApi.getList({ state })
     if (res.code === 0)
       taskList.value = res.data || []
@@ -324,10 +333,20 @@ async function refreshTaskList(state = ['0', '1']) {
   catch (error) {
     console.error('刷新任务列表失败:', error)
   }
+  finally {
+    loading.value = false
+  }
 }
 </script>
 
 <style scoped>
+  .remaining-days {
+    margin-left: 12px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #ff4d4f;
+  }
+
   .text-work {
     color: #1890ff;
   }
@@ -357,9 +376,7 @@ async function refreshTaskList(state = ['0', '1']) {
   }
 
   .deadline-container {
-    display: flex;
     align-items: center;
-    margin-top: 16px;
     padding: 6px 10px;
     background-color: rgba(0, 0, 0, 0.03);
     border-radius: 6px;
