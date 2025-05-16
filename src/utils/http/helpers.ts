@@ -1,15 +1,13 @@
-
-
 import { useAuthStore } from '@/store'
 
 let isConfirming = false
-export function resolveResError(code, message) {
+export function resolveResError(code: number, message: string) {
   switch (code) {
     case 401:
       if (isConfirming)
         return
       isConfirming = true
-      $dialog.confirm({
+      window.$dialog.confirm({
         title: '提示',
         type: 'info',
         content: '登录已过期，是否重新登录？',
@@ -28,7 +26,7 @@ export function resolveResError(code, message) {
       if (isConfirming)
         return
       isConfirming = true
-      $dialog.confirm({
+      window.$dialog.confirm({
         title: '提示',
         type: 'info',
         content: `${message}，是否重新登录？`,

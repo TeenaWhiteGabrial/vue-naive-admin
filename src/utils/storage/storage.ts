@@ -1,47 +1,58 @@
-/**********************************
- * @FilePath: storage.js
- * @Author: Ronnie Zhang
- * @LastEditor: Ronnie Zhang
- * @LastEditTime: 2023/12/04 22:46:13
- * @Email: zclzone@outlook.com
- * Copyright © 2023 Ronnie Zhang(大脸怪) | https://isme.top
- **********************************/
-
 import { isNullOrUndef } from '@/utils'
 
-class Storage {
-  constructor(option) {
+interface StorageOption {
+  storage: Storage
+  prefixKey: string
+}
+
+interface StorageData<T = any> {
+  value: T
+  time: number
+  expire: number | null
+}
+
+class WebStorage {
+  private storage: Storage
+  private prefixKey: string
+
+  constructor(option: StorageOption) {
     this.storage = option.storage
     this.prefixKey = option.prefixKey
   }
 
-  getKey(key) {
+  getKey(key: string): string {
     return `${this.prefixKey}${key}`.toLowerCase()
   }
 
-  set(key, value, expire) {
+  set<T = any>(key: string, value: T, expire?: number): void {
+    const currentTime = new Date().getTime()
     const stringData = JSON.stringify({
       value,
-      time: Date.now(),
-      expire: !isNullOrUndef(expire) ? new Date().getTime() + expire * 1000 : null,
+      time: currentTime,
+      expire: typeof expire === 'number' ? currentTime + expire * 1000 : null,
     })
     this.storage.setItem(this.getKey(key), stringData)
   }
 
-  get(key) {
-    const { value } = this.getItem(key, {})
+  get<T = any>(key: string): T | undefined {
+    const defaultData: StorageData<T> = {
+      value: undefined as T,
+      time: Date.now(),
+      expire: null,
+    }
+    const { value } = this.getItem<T>(key, defaultData) || defaultData
     return value
   }
 
-  getItem(key, def = null) {
+  getItem<T = any>(key: string, def: StorageData<T> | null = null): StorageData<T> | null {
     const val = this.storage.getItem(this.getKey(key))
     if (!val)
       return def
     try {
-      const data = JSON.parse(val)
+      const data = JSON.parse(val) as StorageData<T>
       const { value, time, expire } = data
-      if (isNullOrUndef(expire) || expire > new Date().getTime()) {
-        return { value, time }
+      if (isNullOrUndef(expire) || (expire && expire > new Date().getTime())) {
+        return { value, time, expire }
       }
       this.remove(key)
       return def
@@ -52,15 +63,20 @@ class Storage {
     }
   }
 
-  remove(key) {
+  remove(key: string): void {
     this.storage.removeItem(this.getKey(key))
   }
 
-  clear() {
+  clear(): void {
     this.storage.clear()
   }
 }
 
-export function createStorage({ prefixKey = '', storage = sessionStorage }) {
-  return new Storage({ prefixKey, storage })
+interface CreateStorageOptions {
+  prefixKey?: string
+  storage?: Storage
+}
+
+export function createStorage({ prefixKey = '', storage = sessionStorage }: CreateStorageOptions = {}): WebStorage {
+  return new WebStorage({ prefixKey, storage })
 }

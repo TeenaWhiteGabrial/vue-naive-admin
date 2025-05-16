@@ -24,7 +24,7 @@ export function isObject(val: any): boolean {
   return !isNull(val) && is(val, 'Object')
 }
 
-export function isArray(val: any): boolean{
+export function isArray(val: any): boolean {
   return val && Array.isArray(val)
 }
 
@@ -40,7 +40,7 @@ export function isBoolean(val: any): boolean {
   return is(val, 'Boolean')
 }
 
-export function isDate(val: any): boolean{
+export function isDate(val: any): boolean {
   return is(val, 'Date')
 }
 
@@ -48,7 +48,7 @@ export function isRegExp(val: any): boolean {
   return is(val, 'RegExp')
 }
 
-export function isFunction(val: any): boolean{
+export function isFunction(val: any): boolean {
   return typeof val === 'function'
 }
 
@@ -56,11 +56,11 @@ export function isPromise(val: any): boolean {
   return is(val, 'Promise') && isObject(val) && isFunction(val.then) && isFunction(val.catch)
 }
 
-export function isElement(val: any): boolean{
+export function isElement(val: any): boolean {
   return isObject(val) && !!val.tagName
 }
 
-export function isWindow(val: any): boolean{
+export function isWindow(val: any): boolean {
   return typeof window !== 'undefined' && isDef(window) && is(val, 'Window')
 }
 

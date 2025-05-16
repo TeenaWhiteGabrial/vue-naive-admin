@@ -1,7 +1,7 @@
 import * as NaiveUI from 'naive-ui'
+import type { DialogApi, LoadingBarApi, MessageApi, NotificationApi } from 'naive-ui'
 import { isNullOrUndef } from '@/utils'
 import { useAppStore } from '@/store'
-import type { MessageApi, DialogApi, NotificationApi, LoadingBarApi } from 'naive-ui'
 
 interface MessageOptions {
   key?: string
@@ -10,8 +10,8 @@ interface MessageOptions {
 }
 
 interface MessageInstance {
-  type: string
-  content: string | number
+  type: 'info' | 'success' | 'warning' | 'error' | 'loading'
+  content: string | number | null
   destroy: () => void
 }
 
@@ -19,7 +19,7 @@ export function setupMessage(NMessage: MessageApi) {
   class Message {
     static instance: Message
     private message: Record<string, MessageInstance> | undefined
-    private removeTimer: Record<string, NodeJS.Timeout> | undefined
+    private removeTimer: Record<string, ReturnType<typeof setTimeout>> | undefined
 
     constructor() {
       if (Message.instance)
@@ -30,19 +30,27 @@ export function setupMessage(NMessage: MessageApi) {
     }
 
     removeMessage(key: string, duration: number = 5000): void {
-      this.removeTimer[key] && clearTimeout(this.removeTimer[key])
+      if (this.removeTimer?.[key]) {
+        clearTimeout(this.removeTimer[key])
+      }
+      if (!this.message || !this.removeTimer) {
+        return
+      }
+
       this.removeTimer[key] = setTimeout(() => {
-        this.message[key]?.destroy()
+        if (this.message?.[key]?.destroy) {
+          this.message[key].destroy()
+        }
       }, duration)
     }
 
     destroy(key: string, duration: number = 200): void {
       setTimeout(() => {
-        this.message[key]?.destroy()
+        this.message?.[key]?.destroy()
       }, duration)
     }
 
-    showMessage(type: string, content: string | string[], option: MessageOptions = {}): void {
+    showMessage(type: 'info' | 'success' | 'warning' | 'error' | 'loading', content: string | string[], option: MessageOptions = {}): void {
       if (Array.isArray(content)) {
         content.forEach(msg => NMessage[type](msg, option))
         return
@@ -53,19 +61,29 @@ export function setupMessage(NMessage: MessageApi) {
         return
       }
 
-      const currentMessage = this.message[option.key]
+      const currentMessage = this.message?.[option.key]
       if (currentMessage) {
         currentMessage.type = type
-        currentMessage.content = content
+        currentMessage.content = content || '' // 确保content不为undefined
       }
       else {
-        this.message[option.key] = NMessage[type](content, {
+        const messageInstance = NMessage[type](content, {
           ...option,
           duration: 0,
           onAfterLeave: () => {
-            delete this.message[option.key]
+            if (this.message && option.key) {
+              delete this.message[option.key]
+            }
           },
         })
+
+        if (this.message && messageInstance) {
+          this.message[option.key] = {
+            type,
+            content: content || '', // 确保content不为undefined
+            destroy: messageInstance.destroy,
+          }
+        }
       }
       this.removeMessage(option.key, option.duration)
     }
@@ -96,27 +114,31 @@ export function setupMessage(NMessage: MessageApi) {
 
 interface DialogOptions {
   title?: string
-  type?: string
+  type?: 'info' | 'success' | 'warning' | 'error'
   confirm?: () => void
   cancel?: () => void
   [key: string]: any
 }
 
 export function setupDialog(NDialog: DialogApi) {
-  NDialog.confirm = function (option: DialogOptions = {}) {
-    const showIcon = !isNullOrUndef(option.title)
-    return NDialog[option.type || 'warning']({
-      showIcon,
-      positiveText: '确定',
-      negativeText: '取消',
-      onPositiveClick: option.confirm,
-      onNegativeClick: option.cancel,
-      onMaskClick: option.cancel,
-      ...option,
-    })
+  const dialog = {
+    ...NDialog,
+    confirm(option: DialogOptions = {}) {
+      const showIcon = !isNullOrUndef(option.title)
+
+      return NDialog[option.type || 'warning']({
+        showIcon,
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: option.confirm,
+        onNegativeClick: option.cancel,
+        onMaskClick: option.cancel,
+        ...option,
+      })
+    },
   }
 
-  return NDialog
+  return dialog
 }
 
 declare global {
