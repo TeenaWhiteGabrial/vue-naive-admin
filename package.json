@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "vite --mode development",
-    "build": "vite build",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "build-only": "vite build",
     "preview": "vite preview",
     "lint:fix": "eslint --fix",
     "postinstall": "npx simple-git-hooks",
@@ -13,6 +14,7 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
+    "@vue/tsconfig": "^0.7.0",
     "@vueuse/core": "^10.11.0",
     "axios": "^1.7.2",
     "dayjs": "^1.11.11",
@@ -31,6 +33,9 @@
     "@antfu/eslint-config": "^2.21.1",
     "@iconify/json": "^2.2.219",
     "@iconify/utils": "^2.1.24",
+    "@tsconfig/node22": "^22.0.1",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.14.0",
     "@unocss/eslint-config": "^0.61.0",
     "@unocss/eslint-plugin": "^0.61.0",
     "@unocss/preset-rem-to-px": "^0.61.0",

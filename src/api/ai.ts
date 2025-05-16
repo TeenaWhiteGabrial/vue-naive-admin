@@ -3,5 +3,5 @@ import { request } from '@/utils'
 /** AI相关接口 */
 export default {
   /** 获取诗句接口 */
-  getVerse: data => request.post(`/spc/ai/getVerse`, data),
+  getVerse: (data: string) => request.post(`/spc/ai/getVerse`, data),
 }

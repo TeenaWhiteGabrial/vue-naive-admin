@@ -1,12 +1,27 @@
 import * as NaiveUI from 'naive-ui'
 import { isNullOrUndef } from '@/utils'
 import { useAppStore } from '@/store'
+import type { MessageApi, DialogApi, NotificationApi, LoadingBarApi } from 'naive-ui'
 
-export function setupMessage(NMessage) {
+interface MessageOptions {
+  key?: string
+  duration?: number
+  [key: string]: any
+}
+
+interface MessageInstance {
+  type: string
+  content: string | number
+  destroy: () => void
+}
+
+export function setupMessage(NMessage: MessageApi) {
   class Message {
-    static instance
+    static instance: Message
+    private message: Record<string, MessageInstance> | undefined
+    private removeTimer: Record<string, NodeJS.Timeout> | undefined
+
     constructor() {
-      // 单例模式
       if (Message.instance)
         return Message.instance
       Message.instance = this
@@ -14,26 +29,28 @@ export function setupMessage(NMessage) {
       this.removeTimer = {}
     }
 
-    removeMessage(key, duration = 5000) {
+    removeMessage(key: string, duration: number = 5000): void {
       this.removeTimer[key] && clearTimeout(this.removeTimer[key])
       this.removeTimer[key] = setTimeout(() => {
         this.message[key]?.destroy()
       }, duration)
     }
 
-    destroy(key, duration = 200) {
+    destroy(key: string, duration: number = 200): void {
       setTimeout(() => {
         this.message[key]?.destroy()
       }, duration)
     }
 
-    showMessage(type, content, option = {}) {
+    showMessage(type: string, content: string | string[], option: MessageOptions = {}): void {
       if (Array.isArray(content)) {
-        return content.forEach(msg => NMessage[type](msg, option))
+        content.forEach(msg => NMessage[type](msg, option))
+        return
       }
 
       if (!option.key) {
-        return NMessage[type](content, option)
+        NMessage[type](content, option)
+        return
       }
 
       const currentMessage = this.message[option.key]
@@ -53,23 +70,23 @@ export function setupMessage(NMessage) {
       this.removeMessage(option.key, option.duration)
     }
 
-    loading(content, option) {
+    loading(content: string | string[], option?: MessageOptions): void {
       this.showMessage('loading', content, option)
     }
 
-    success(content, option) {
+    success(content: string | string[], option?: MessageOptions): void {
       this.showMessage('success', content, option)
     }
 
-    error(content, option) {
+    error(content: string | string[], option?: MessageOptions): void {
       this.showMessage('error', content, option)
     }
 
-    info(content, option) {
+    info(content: string | string[], option?: MessageOptions): void {
       this.showMessage('info', content, option)
     }
 
-    warning(content, option) {
+    warning(content: string | string[], option?: MessageOptions): void {
       this.showMessage('warning', content, option)
     }
   }
@@ -77,8 +94,16 @@ export function setupMessage(NMessage) {
   return new Message()
 }
 
-export function setupDialog(NDialog) {
-  NDialog.confirm = function (option = {}) {
+interface DialogOptions {
+  title?: string
+  type?: string
+  confirm?: () => void
+  cancel?: () => void
+  [key: string]: any
+}
+
+export function setupDialog(NDialog: DialogApi) {
+  NDialog.confirm = function (option: DialogOptions = {}) {
     const showIcon = !isNullOrUndef(option.title)
     return NDialog[option.type || 'warning']({
       showIcon,
@@ -94,7 +119,16 @@ export function setupDialog(NDialog) {
   return NDialog
 }
 
-export function setupNaiveDiscreteApi() {
+declare global {
+  interface Window {
+    $loadingBar: LoadingBarApi
+    $notification: NotificationApi
+    $message: ReturnType<typeof setupMessage>
+    $dialog: ReturnType<typeof setupDialog>
+  }
+}
+
+export function setupNaiveDiscreteApi(): void {
   const appStore = useAppStore()
   const configProviderProps = computed(() => ({
     theme: appStore.isDark ? NaiveUI.darkTheme : undefined,
