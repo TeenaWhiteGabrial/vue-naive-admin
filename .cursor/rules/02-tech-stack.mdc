@@ -1,0 +1,37 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin 技术栈
+
+本项目使用以下主要技术栈：
+
+## 核心技术
+
+- [Vue 3](mdc:https:/vuejs.org) - 渐进式 JavaScript 框架
+- [TypeScript](mdc:https:/www.typescriptlang.org) - JavaScript 的超集，增加了类型系统
+- [Vite](mdc:https:/vitejs.dev) - 现代前端构建工具
+- [Naive UI](mdc:https:/www.naiveui.com) - Vue 3 组件库
+- [Pinia](mdc:https:/pinia.vuejs.org) - Vue 状态管理库
+- [Vue Router](mdc:https:/router.vuejs.org) - Vue.js 官方路由
+
+## 样式和图标
+
+- [UnoCSS](mdc:https:/unocss.dev) - 即时按需原子 CSS 引擎
+- [Sass](mdc:https:/sass-lang.com) - CSS 预处理器
+
+## 工具库
+
+- [VueUse](mdc:https:/vueuse.org) - Vue 组合式 API 工具集
+- [Axios](mdc:https:/axios-http.com) - 基于 Promise 的 HTTP 客户端
+- [ECharts](mdc:https:/echarts.apache.org) - 数据可视化图表库
+- [dayjs](mdc:https:/day.js.org) - 轻量级日期处理库
+- [lodash-es](mdc:https:/lodash.com) - 实用工具库
+
+## 开发工具
+
+- [ESLint](mdc:https:/eslint.org) - JavaScript 和 TypeScript 代码检查工具
+- [unplugin-auto-import](mdc:https:/github.com/antfu/unplugin-auto-import) - API 自动导入
+- [unplugin-vue-components](mdc:https:/github.com/antfu/unplugin-vue-components) - 组件自动导入
+

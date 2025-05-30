@@ -1,0 +1,47 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin 最佳实践
+
+## 代码风格
+
+- 使用 ESLint 进行代码检查
+- 遵循项目的代码风格指南
+- 使用 TypeScript 类型定义，避免 `any` 类型
+
+## 组件开发
+
+- 使用 `<script setup>` 语法
+- 组件按功能拆分，保持单一职责
+- 使用组合式 API 组织组件逻辑
+- 使用 Props 和 Emits 进行组件通信
+- 使用 `defineProps` 和 `defineEmits` 定义组件接口
+
+## 状态管理
+
+- 使用 Pinia 进行状态管理
+- 按功能模块拆分 Store
+- 使用 TypeScript 定义 Store 类型
+- 适当使用状态持久化
+
+## 路由管理
+
+- 按功能模块组织路由
+- 使用路由守卫进行权限控制
+- 使用路由元信息定义路由特性
+
+## 样式开发
+
+- 使用 UnoCSS 原子类优先
+- 组件样式使用 `<style scoped>` 确保样式隔离
+- 使用 SCSS 变量管理颜色、尺寸等
+- 遵循 BEM 命名规范
+
+## 性能优化
+
+- 使用 `v-memo` 优化列表渲染
+- 使用 `v-once` 优化静态内容
+- 使用异步组件和路由懒加载
+- 合理使用计算属性和缓存

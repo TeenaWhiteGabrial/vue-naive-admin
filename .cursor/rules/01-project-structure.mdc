@@ -1,0 +1,30 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin 项目结构
+
+这是一个基于 Vue 3、Vite、Naive UI 和 TypeScript 的后台管理系统模板。
+
+## 主要入口文件
+
+- 项目入口：[src/main.ts](mdc:src/main.ts) - 应用程序的启动文件
+- 根组件：[src/App.vue](mdc:src/App.vue) - Vue 应用的根组件
+- 全局设置：[src/settings.ts](mdc:src/settings.ts) - 应用程序的全局配置
+
+## 项目结构
+
+- `src/api/` - API 请求相关代码
+- `src/assets/` - 静态资源文件（图片、字体等）
+- `src/components/` - 可复用组件
+- `src/composables/` - Vue 组合式函数
+- `src/directives/` - Vue 自定义指令
+- `src/layouts/` - 页面布局组件
+- `src/router/` - 路由配置
+- `src/store/` - Pinia 状态管理
+- `src/styles/` - 全局样式文件
+- `src/types/` - TypeScript 类型定义
+- `src/utils/` - 工具函数
+- `src/views/` - 页面视图组件
+

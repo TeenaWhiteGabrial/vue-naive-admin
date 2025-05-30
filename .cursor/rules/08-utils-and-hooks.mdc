@@ -1,0 +1,37 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin 工具函数与组合式 API
+
+## 工具函数
+
+- 工具目录：[src/utils/](mdc:src/utils) - 通用工具函数
+  - 按功能分类，如请求工具、格式化工具等
+
+## 组合式 API
+
+- 组合式 API 目录：[src/composables/](mdc:src/composables) - 可复用的组合式函数
+  - 按功能分类，如状态管理、DOM 操作等
+
+## 自定义指令
+
+- 指令目录：[src/directives/](mdc:src/directives) - Vue 自定义指令
+  - 用于扩展元素行为
+
+## 类型定义
+
+- 类型目录：[src/types/](mdc:src/types) - TypeScript 类型定义
+  - 按功能分类，如 API 响应类型、组件 Props 类型等
+
+## API 自动导入
+
+项目使用 [unplugin-auto-import](mdc:https:/github.com/antfu/unplugin-auto-import) 实现 API 自动导入：
+
+- Vue API 自动导入
+- VueUse 函数自动导入
+- Vue Router API 自动导入
+- Pinia API 自动导入
+
+自动导入的 API 定义在 [src/auto-imports.d.ts](mdc:src/auto-imports.d.ts) 文件中。

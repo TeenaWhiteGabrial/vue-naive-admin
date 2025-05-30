@@ -1,0 +1,42 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin 状态管理
+
+项目使用 [Pinia](mdc:https:/pinia.vuejs.org) 进行状态管理。
+
+## 状态管理配置
+
+- 状态管理入口：[src/store/index.ts](mdc:src/store/index.ts) - Pinia 初始化
+- 状态模块：[src/store/modules/](mdc:src/store/modules) - 各个状态模块
+- 持久化：项目使用 `pinia-plugin-persistedstate` 插件实现状态持久化
+
+## 状态模块
+
+状态模块按功能分类，每个模块负责特定的状态管理：
+
+- 用户状态：管理用户信息、权限等
+- 应用设置：管理应用程序设置，如主题、布局等
+- 标签页：管理多标签页功能
+- 权限：管理权限相关状态
+
+## 使用方式
+
+在组件中使用 Pinia 状态：
+
+```ts
+// 导入状态
+import { useUserStore } from '@/store/modules/user'
+
+// 在组件中使用
+const userStore = useUserStore()
+
+// 访问状态
+console.log(userStore.userInfo)
+
+// 修改状态
+userStore.setUserInfo(newUserInfo)
+```
+

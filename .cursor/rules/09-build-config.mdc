@@ -1,0 +1,36 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin 构建配置
+
+## 构建工具
+
+项目使用 [Vite](mdc:https:/vitejs.dev) 作为构建工具。
+
+## 主要配置文件
+
+- Vite 配置：[vite.config.ts](mdc:vite.config.ts) - Vite 构建配置
+- TypeScript 配置：
+  - [tsconfig.json](mdc:tsconfig.json) - 基础 TypeScript 配置
+  - [tsconfig.app.json](mdc:tsconfig.app.json) - 应用程序 TypeScript 配置
+  - [tsconfig.node.json](mdc:tsconfig.node.json) - Node.js TypeScript 配置
+- ESLint 配置：[eslint.config.js](mdc:eslint.config.js) - ESLint 代码检查配置
+- UnoCSS 配置：[uno.config.ts](mdc:uno.config.ts) - UnoCSS 配置
+
+## 环境变量
+
+项目支持不同环境的环境变量：
+
+- `.env` - 所有环境共享的环境变量
+- `.env.development` - 开发环境的环境变量
+- `.env.production` - 生产环境的环境变量
+
+环境变量类型定义在 [env.d.ts](mdc:env.d.ts) 文件中。
+
+## 构建命令
+
+- 开发环境：`pnpm dev` - 启动开发服务器
+- 生产构建：`pnpm build` - 构建生产版本
+- 预览构建：`pnpm preview` - 本地预览生产构建

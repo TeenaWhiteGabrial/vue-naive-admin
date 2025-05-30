@@ -1,0 +1,45 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin 样式系统
+
+## 样式目录
+
+- 全局样式：[src/styles/](mdc:src/styles) - 全局样式文件
+  - `reset.css` - 重置浏览器默认样式
+  - `global.scss` - 全局样式定义
+
+## 样式技术栈
+
+项目使用多种样式技术：
+
+- [Sass](mdc:https:/sass-lang.com) - CSS 预处理器
+- [UnoCSS](mdc:https:/unocss.dev) - 即时按需原子 CSS 引擎
+
+## 主题定制
+
+项目支持主题定制：
+
+- Naive UI 主题定制
+- 明暗模式切换
+- 主题色切换
+
+## 样式编写规范
+
+- 组件样式：使用 `<style scoped>` 确保样式隔离
+- 全局样式：放在 `src/styles/` 目录下
+- 使用 UnoCSS 原子类优先，减少自定义 CSS 编写
+- 使用 SCSS 变量管理颜色、尺寸等
+- 遵循 BEM 命名规范（Block-Element-Modifier）
+
+## UnoCSS 使用
+
+项目配置了 UnoCSS，可以直接在模板中使用原子类：
+
+```html
+<div class="flex items-center justify-between p-4 bg-white dark:bg-dark rounded shadow">
+  <!-- 内容 -->
+</div>
+```

@@ -1,0 +1,50 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Vue Naive Admin API 请求
+
+项目使用 [Axios](mdc:https:/axios-http.com) 处理 API 请求。
+
+## API 目录结构
+
+- API 模块：[src/api/](mdc:src/api) - API 请求相关代码
+  - 按功能模块组织，例如用户相关、系统相关等
+
+## 请求封装
+
+项目对 Axios 进行了封装，提供了统一的请求处理：
+
+- 请求拦截器：添加 token、处理请求头等
+- 响应拦截器：统一处理响应数据、错误处理等
+- 请求取消：支持取消重复请求
+- 错误处理：统一处理网络错误、业务错误等
+
+## 使用方式
+
+在组件或服务中使用 API 请求：
+
+```ts
+import { getUserInfo } from '@/api/user'
+
+// 使用 async/await
+const fetchUserInfo = async () => {
+  try {
+    const { data } = await getUserInfo(userId)
+    // 处理数据
+  } catch (error) {
+    // 处理错误
+  }
+}
+
+// 或使用 Promise
+getUserInfo(userId)
+  .then(({ data }) => {
+    // 处理数据
+  })
+  .catch(error => {
+    // 处理错误
+  })
+```
+
